@@ -22,7 +22,4 @@ logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
   org.springframework.web : DEBUG
-  org.springframework.web.socket : DEBUG
-  org.apache.kafka: DEBUG
-  org.springframework.kafka:
   org.springframework.cache: DEBUG
