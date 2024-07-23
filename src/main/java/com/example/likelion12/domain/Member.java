@@ -2,6 +2,7 @@ package com.example.likelion12.domain;
 
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.domain.base.BaseTime;
+import com.example.likelion12.domain.base.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,10 @@ public class Member extends BaseTime {
 
     @Column(nullable = false)
     private String memberPhone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
