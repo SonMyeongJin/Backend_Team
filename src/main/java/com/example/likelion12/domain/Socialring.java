@@ -42,6 +42,9 @@ public class Socialring extends BaseTime {
     @Column(nullable = false)
     private String comment;
 
+    @Column(nullable = false)
+    private String commentSimple;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BaseStatus status;
