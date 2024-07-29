@@ -1,5 +1,7 @@
 package com.example.likelion12.domain;
 
+import com.example.likelion12.domain.base.BaseGender;
+import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.domain.base.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,6 +46,14 @@ public class Socialring extends BaseTime {
 
     @Column(nullable = false)
     private String commentSimple;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BaseGender gender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BaseLevel level;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
