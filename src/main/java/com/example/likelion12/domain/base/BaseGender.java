@@ -1,6 +1,6 @@
 package com.example.likelion12.domain.base;
 
-public enum Gender {
+public enum BaseGender {
     F, M, U
 
 }
