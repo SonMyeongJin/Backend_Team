@@ -7,20 +7,12 @@ spring:
   config:
     activate:
       on-profile: local
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
 
 ---
 spring:
   config:
     activate:
       on-profile: prod
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
 ---
 spring:
   security:
@@ -28,8 +20,8 @@ spring:
       client:
         registration:
           kakao:
-            client-id: ${SOCIAL_CLIENT_ID}
-
+            client-id: ${CLIENT_ID}
+---
 logging:
   level:
     org:
