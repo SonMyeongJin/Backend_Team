@@ -1,4 +1,4 @@
-package com.example.likelion12;
+package com.example.likelion12.controller;
 
 import lombok.Getter;
 import org.springframework.web.bind.annotation.GetMapping;
