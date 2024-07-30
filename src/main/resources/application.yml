@@ -13,6 +13,16 @@ spring:
     show-sql: true
 
 ---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+---
+
 logging:
   level:
     org:
