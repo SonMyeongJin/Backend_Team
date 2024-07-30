@@ -24,18 +24,13 @@ public class Member extends BaseTime {
     private long memberId;
 
     @Column(nullable = false)
-    private String memberName;
+    private String memberName; // 카카오 이름
 
     @Column(nullable = false)
-    private String id;
+    private String email; // 카카오 이메일
 
     @Column(nullable = false)
-    private String password;
-
-    private String memberImg;
-
-    @Column(nullable = false)
-    private String memberPhone;
+    private String memberImg; // 카카오 프로필 사진
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
