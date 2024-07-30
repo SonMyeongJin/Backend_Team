@@ -1,11 +1,9 @@
 package com.example.likelion12.service;
 
-import com.example.likelion12.dto.LoginResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,14 +24,18 @@ public class LoginService {
         log.info("[LoginService.kakaoLogin]");
         String accessToken = getAccessToken(code);
         String[] userInfo = getUserInfo(accessToken);
+        // 아래 로그는 지워질 부분
         log.info(userInfo[0]);
         log.info(userInfo[1]);
         log.info(userInfo[2]);
 
         // 만약에 데이터베이스에 userInfo[2] 에 있는 이메일을 가진 유저가 없으면 회원가임
-        //있으면 그냥 정보 반환
+
+        // 있으면 그냥 정보 반환
+        // 1. 소셜로그인에 따른 member 도메인 변경 필요
+        // 2. 해당 이메일로 멤버 찾고 null 이면 회원가입, 있다면 정보 반환하도록 코드 구현
+        // 3. jwt 토큰 반환하도록 구현
         return null;
-//        return LoginResponse(userInfo[0], userInfo[1], userInfo[2]);
     }
 
     private String getAccessToken(String code){
