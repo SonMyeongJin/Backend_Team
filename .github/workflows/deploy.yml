@@ -2,12 +2,10 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - develop
-      - 3-be-cicd-구축
+    branches: ["develop", "3-be-cicd-구축"]
   pull_request:
-    branches:
-      - develop
+    branches: ["develop"]
+    types: [closed]
 
 jobs:
   build:
