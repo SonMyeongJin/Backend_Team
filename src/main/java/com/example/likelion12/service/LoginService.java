@@ -23,6 +23,8 @@ public class LoginService {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    private String redirectUri;
 
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
@@ -67,7 +69,7 @@ public class LoginService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/token")
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", clientId)
-                .queryParam("redirect_uri", "http://localhost:8080/auth/kakao/callback")
+                .queryParam("redirect_uri", redirectUri)
                 .queryParam("code", code);
 
         HttpHeaders headers = new HttpHeaders();
