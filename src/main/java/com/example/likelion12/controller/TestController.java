@@ -10,4 +10,9 @@ public class TestController {
     public String likelion(){
         return "test";
     }
+
+    @GetMapping("/test2")
+    public String test2(){
+        return "성공~~~";
+    }
 }
