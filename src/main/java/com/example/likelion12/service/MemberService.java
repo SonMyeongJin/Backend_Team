@@ -14,6 +14,7 @@ import com.example.likelion12.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.ALREADY_EXIST_EMAIL;
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_EXERCISE;
@@ -21,6 +22,7 @@ import static com.example.likelion12.common.response.status.BaseExceptionRespons
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -31,6 +33,7 @@ public class MemberService {
     /**
      * 회원가입
      */
+    @Transactional
     public PostSignupResponse signUp(PostSignupRequest postSignupRequest){
         log.info("[MemberService.signUp]");
         String nickname = postSignupRequest.getNickname();
