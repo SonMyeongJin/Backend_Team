@@ -1,5 +1,10 @@
 package com.example.likelion12.service;
 
+import com.example.likelion12.domain.Member;
+import com.example.likelion12.domain.base.BaseStatus;
+import com.example.likelion12.dto.LoginResponse;
+import com.example.likelion12.repository.MemberRepository;
+import com.example.likelion12.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -9,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -17,25 +24,38 @@ public class LoginService {
     @Value("${CLIENT_ID}")
     private String clientId;
 
+    private final MemberRepository memberRepository;
+    private final JwtProvider jwtProvider;
+
     /**
      * 카카오 소셜로그인
      */
-    public Void kakaoLogin(String code){
+    public LoginResponse kakaoLogin(String code){
         log.info("[LoginService.kakaoLogin]");
         String accessToken = getAccessToken(code);
         String[] userInfo = getUserInfo(accessToken);
-        // 아래 로그는 지워질 부분
-        log.info(userInfo[0]);
-        log.info(userInfo[1]);
-        log.info(userInfo[2]);
+        boolean memberStatus = false;
+        Long memberId = null;
+        String profileImage = userInfo[1];
+        String nickname = userInfo[0];
+        String email = userInfo[2];
+        String jwtToken = null;
 
         // 만약에 데이터베이스에 userInfo[2] 에 있는 이메일을 가진 유저가 없으면 회원가임
+        Optional<Member> member = memberRepository.findByEmailAndStatus(email, BaseStatus.ACTIVE);
 
         // 있으면 그냥 정보 반환
-        // 1. 소셜로그인에 따른 member 도메인 변경 필요
-        // 2. 해당 이메일로 멤버 찾고 null 이면 회원가입, 있다면 정보 반환하도록 코드 구현
-        // 3. jwt 토큰 반환하도록 구현
-        return null;
+        if(member.isPresent()){
+            memberStatus = true;
+            Member myUser = member.get();
+            memberId = myUser.getMemberId();
+            profileImage = myUser.getMemberImg();
+            nickname = myUser.getMemberName();
+            jwtToken = jwtProvider.createAccessToken(myUser.getEmail(), myUser.getMemberId());
+            return new LoginResponse(memberStatus, memberId, profileImage, nickname, jwtToken);
+        } else {
+            return new LoginResponse(memberStatus, memberId, profileImage, nickname, jwtToken);
+        }
     }
 
     private String getAccessToken(String code){
