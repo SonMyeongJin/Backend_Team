@@ -4,6 +4,7 @@ import com.example.likelion12.domain.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class JwtProvider {
 
     // Access Token 생성
     public String createAccessToken(String email, Long memberId) {
-        Claims claims = Jwts.claims().setSubject(email.trim());
+        Claims claims = Jwts.claims().setSubject(email);
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessTokenExpiration);
 
@@ -29,7 +30,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .claim("memberId", memberId)
+                .claim("memberId",memberId)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
@@ -51,7 +52,7 @@ public class JwtProvider {
         try {
             jwtToken = extractJwtToken(authorization);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 헤더 포맷입니다.");
+            throw new IllegalArgumentException("유효하지 않은 헤더 포멧입니다.");
         }
 
         // JWT 토큰에서 사용자 정보 추출
@@ -70,9 +71,9 @@ public class JwtProvider {
     public String extractJwtToken(String authorizationHeader) {
         String[] parts = authorizationHeader.split(" ");
         if (parts.length == 2) {
-            return parts[1].trim(); // 토큰 부분 추출 및 공백 제거
+            return parts[1]; // 토큰 부분 추출
         }
-        throw new IllegalArgumentException("유효하지 않은 헤더 포맷입니다.");
+        throw new IllegalArgumentException("유효하지 않은 헤더 포멧입니다.");
     }
 
     public Long extractMemberIdFromJwtToken(String jwtToken) {
@@ -90,4 +91,5 @@ public class JwtProvider {
 
         return memberId;
     }
+
 }
