@@ -26,6 +26,7 @@ public class LoginService {
 
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final TokenService tokenService;
 
     /**
      * 카카오 소셜로그인
@@ -52,6 +53,7 @@ public class LoginService {
             profileImage = myUser.getMemberImg();
             nickname = myUser.getMemberName();
             jwtToken = jwtProvider.createAccessToken(myUser.getEmail(), myUser.getMemberId());
+            tokenService.storeToken(jwtToken, memberId);
             return new LoginResponse(memberStatus, memberId, profileImage, nickname, email, jwtToken);
         } else {
             return new LoginResponse(memberStatus, memberId, profileImage, nickname, email, jwtToken);

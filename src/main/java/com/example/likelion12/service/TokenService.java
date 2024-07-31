@@ -17,9 +17,9 @@ public class TokenService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void storeToken(String token, String githubId) {
+    public void storeToken(String token, Long memberId) {
         // redis 에 토큰 저장
-        redisTemplate.opsForValue().set(githubId, token, accessTokenExpiration, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set(String.valueOf(memberId), token, accessTokenExpiration, TimeUnit.MILLISECONDS);
     }
 
     public boolean checkTokenExists(String token) {
