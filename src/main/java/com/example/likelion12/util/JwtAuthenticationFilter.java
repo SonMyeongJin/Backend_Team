@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.info(token);
                 String memberId = String.valueOf(jwtProvider.extractIdFromHeader(token));
                 if (tokenService.checkTokenExists(memberId)) { // 리프레시 토큰이 존재하는지 확인
-                    Member member = new Member(Long.valueOf(memberId), null, null, null, null, null, null, null, null);
+                    Member member = new Member(Long.valueOf(memberId), null, null, null, null, null, null, null, null,null);
                     AbstractAuthenticationToken authenticated = new UsernamePasswordAuthenticationToken(member, null, null);
                     authenticated.setDetails(new WebAuthenticationDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authenticated);

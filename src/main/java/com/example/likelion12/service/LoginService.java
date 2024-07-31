@@ -52,9 +52,9 @@ public class LoginService {
             profileImage = myUser.getMemberImg();
             nickname = myUser.getMemberName();
             jwtToken = jwtProvider.createAccessToken(myUser.getEmail(), myUser.getMemberId());
-            return new LoginResponse(memberStatus, memberId, profileImage, nickname, jwtToken);
+            return new LoginResponse(memberStatus, memberId, profileImage, nickname, email, jwtToken);
         } else {
-            return new LoginResponse(memberStatus, memberId, profileImage, nickname, jwtToken);
+            return new LoginResponse(memberStatus, memberId, profileImage, nickname, email, jwtToken);
         }
     }
 
