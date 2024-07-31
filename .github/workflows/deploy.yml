@@ -2,7 +2,7 @@ name: Java CI/CD with Gradle
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop" , "4-be-회원가입"]
   pull_request:
     branches: [ "develop"]
     types: [ closed ]
