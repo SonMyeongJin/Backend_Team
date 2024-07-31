@@ -20,6 +20,7 @@ jobs:
       DB_PROD_PASSWD: ${{ secrets.DB_PROD_PASSWD }}
       WAS_HOST: ${{ secrets.WAS_HOST }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -60,6 +61,7 @@ jobs:
           --build-arg DB_PROD_USERNAME=${{ secrets.DB_PROD_USERNAME }} \
           --build-arg DB_PROD_PASSWD=${{ secrets.DB_PROD_PASSWD }} \
           --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
+          --build-arg CLIENT_ID=${{ secrets.CLIENT_ID }} \
           -t likelion12/likelion12baby:latest .
           docker images
           docker push likelion12/likelion12baby:latest
