@@ -26,6 +26,7 @@ spring:
         registration:
           kakao:
             client-id: ${CLIENT_ID}
+            redirect-uri: http://43.202.94.241:8080/auth/kakao/callback
 ---
 jwt:
   secret: ${JWT_SECRET}
