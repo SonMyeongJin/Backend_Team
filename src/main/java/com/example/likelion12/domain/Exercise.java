@@ -36,4 +36,8 @@ public class Exercise extends BaseTime {
     @JsonIgnore
     @OneToMany(mappedBy = "exercise")
     private List<Socialring> socialringList = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "exercise")
+    private List<Member> memberList = new ArrayList<>();
 }

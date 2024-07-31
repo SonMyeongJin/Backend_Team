@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Entity
 @Getter
 @AllArgsConstructor
@@ -51,5 +53,10 @@ public class Member extends BaseTime {
     @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<MemberCrew> memberCrewList = new ArrayList<>();
+
+    /** exercise 와의 연관관계의 주인 */
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "exercise_id")
+    private Exercise exercise;
 
 }
