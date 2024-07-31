@@ -21,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LoginService {
 
-    @Value("${CLIENT_ID}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
 
     private final MemberRepository memberRepository;
