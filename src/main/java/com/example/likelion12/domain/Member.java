@@ -59,4 +59,12 @@ public class Member extends BaseTime {
     @JoinColumn(name = "exercise_id")
     private Exercise exercise;
 
+    public Member(String memberName, String email, String memberImg, BaseGender gender, BaseStatus status, Exercise exercise){
+        this.memberName = memberName;
+        this.email = email;
+        this.memberImg = memberImg;
+        this.gender = gender;
+        this.status = status;
+        this.exercise = exercise;
+    }
 }

@@ -19,6 +19,7 @@ public class TokenService {
 
     public void storeToken(String token, Long memberId) {
         // redis 에 토큰 저장
+        log.info("[TokenService.storeToken]");
         redisTemplate.opsForValue().set(String.valueOf(memberId), token, accessTokenExpiration, TimeUnit.MILLISECONDS);
     }
 
