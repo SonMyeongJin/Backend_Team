@@ -7,29 +7,29 @@ spring:
   config:
     activate:
       on-profile: local
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
+  redis:
+    host: localhost
+    port: 6379
 ---
 spring:
   config:
     activate:
       on-profile: prod
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
 ---
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${CLIENT_ID}
+---
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 3600000  # 1 hour in milliseconds
 
 logging:
   level:
     org:
       springframework:
         web: DEBUG
-
-jwt:
-  secret: ${JWT_SECRET}
-  access-token-expiration: 3600000  # 1 hour in milliseconds
-  refresh-token-expiration: 86400000  # 1 day in milliseconds
