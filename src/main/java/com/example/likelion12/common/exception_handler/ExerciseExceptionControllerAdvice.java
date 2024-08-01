@@ -16,7 +16,7 @@ public class ExerciseExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ExerciseException.class)
     public BaseErrorResponse handle_ExerciseException(ExerciseException e) {
-        log.error("[handle_ExerciseException", e);
+        log.error("[handle_ExerciseException]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
 }

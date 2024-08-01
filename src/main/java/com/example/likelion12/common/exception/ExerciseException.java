@@ -4,7 +4,7 @@ import com.example.likelion12.common.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class ExerciseException extends RuntimeException {
+public class ExerciseException extends RuntimeException{
 
     private final ResponseStatus exceptionStatus;
 
