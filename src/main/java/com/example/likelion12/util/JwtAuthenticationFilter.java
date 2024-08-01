@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null) {
             try {
                 log.info(token);
-                String memberId = String.valueOf(jwtProvider.extractIdFromHeader(token));
+                String memberId = String.valueOf(jwtProvider.extractMemberIdFromJwtToken(token));
                 if (tokenService.checkTokenExists(memberId)) { // 리프레시 토큰이 존재하는지 확인
                     Member member = new Member(Long.valueOf(memberId), null, null, null, null, null, null, null, null,null);
                     AbstractAuthenticationToken authenticated = new UsernamePasswordAuthenticationToken(member, null, null);
@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String parseBearerToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
                 .filter(token -> token.startsWith("Bearer "))
-                .map(token -> token.substring(7))
+                .map(token -> token.substring(7).trim()) // 공백 제거
                 .orElse(null);
     }
 }
