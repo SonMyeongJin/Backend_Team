@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
 
     Optional<Exercise> findByExerciseIdAndStatus(Long exerciseId, BaseStatus status);
+    Optional<Exercise> findByExerciseNameAndStatus(String exerciseName, BaseStatus status);
 }
