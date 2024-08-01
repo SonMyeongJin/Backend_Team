@@ -74,7 +74,7 @@ public class CrewService {
     /**
      * 크루 상세 조회
      */
-    public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
-        log.info("[CrewService.getCrewDetail]");
-    }
+//    public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
+//        log.info("[CrewService.getCrewDetail]");
+//    }
 }
