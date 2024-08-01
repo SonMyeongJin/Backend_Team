@@ -42,7 +42,7 @@ public class HomeService {
                         socialring.getSocialringId(),
                         socialring.getSocialringName(),
                         socialring.getSocialringImg(),
-                        formatDate(socialring.getSocialringDate()),
+                        socialring.getSocialringDate(),
                         socialring.getActivityRegion().getActivityRegionName(),
                         socialring.getTotalRecruits(),
                         socialring.getSocialringCost(),
