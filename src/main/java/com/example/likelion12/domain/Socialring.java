@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class Socialring extends BaseTime {
     private int totalRecruits;
 
     @Column(nullable = false)
-    private LocalDateTime socialringDate;
+    private LocalDate socialringDate;
 
     @Column(nullable = false)
     private int socialringCost;
@@ -77,4 +77,22 @@ public class Socialring extends BaseTime {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "exercise_id")
     private Exercise exercise;
+
+    public Socialring(String socialringName, String socialringImg, int totalRecruits, LocalDate socialringDate,
+                      int socialringCost, String comment, String commentSimple, BaseGender gender, BaseLevel level,
+                      ActivityRegion activityRegion, Facility facility, Exercise exercise, BaseStatus baseStatus) {
+        this.socialringName = socialringName;
+        this.socialringImg = socialringImg;
+        this.totalRecruits = totalRecruits;
+        this.socialringDate = socialringDate;
+        this.socialringCost = socialringCost;
+        this.commentSimple = commentSimple;
+        this.comment = comment;
+        this.gender = gender;
+        this.level = level;
+        this.activityRegion = activityRegion;
+        this.facility = facility;
+        this.exercise = exercise;
+        this.status =  baseStatus;
+    }
 }

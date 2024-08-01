@@ -39,4 +39,10 @@ public class MemberSocialring extends BaseTime {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public MemberSocialring(BaseRole baseRole, Socialring socialring, Member member, BaseStatus baseStatus) {
+        this.role = baseRole;
+        this.socialring = socialring;
+        this.member = member;
+        this.status = baseStatus;
+    }
 }
