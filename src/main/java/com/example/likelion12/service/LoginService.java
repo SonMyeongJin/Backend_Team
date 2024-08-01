@@ -69,7 +69,7 @@ public class LoginService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/token")
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", clientId)
-                .queryParam("redirect_uri", redirectUri)
+                .queryParam("redirect_uri", "http://43.202.94.241:8080/auth/kakao/callback")
                 .queryParam("code", code);
 
         HttpHeaders headers = new HttpHeaders();
