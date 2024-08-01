@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @GetMapping("/test")
     public String likelion(){
-        return "test";
+        return "testㅇㅇㅇㅇ";
     }
 }
