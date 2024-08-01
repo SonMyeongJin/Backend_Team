@@ -62,4 +62,8 @@ public class MemberService {
             return new PostSignupResponse(member.getMemberId(), accessToken);
         }
     }
+
+    /**
+     * 회원탈퇴
+     */
 }
