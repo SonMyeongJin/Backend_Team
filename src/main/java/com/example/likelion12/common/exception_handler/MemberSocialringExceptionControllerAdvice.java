@@ -1,6 +1,5 @@
 package com.example.likelion12.common.exception_handler;
 
-import com.example.likelion12.common.exception.MemberException;
 import com.example.likelion12.common.exception.MemberSocialringException;
 import com.example.likelion12.common.response.BaseErrorResponse;
 import jakarta.annotation.Priority;
