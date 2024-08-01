@@ -2,7 +2,7 @@ name: Java CI/CD with Gradle
 
 on:
   push:
-    branches: [ "develop" , "42-be-develop-오류-해결" ]
+    branches: [ "develop" ]
   pull_request:
     branches: [ "develop"]
     types: [ closed ]
