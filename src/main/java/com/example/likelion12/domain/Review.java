@@ -30,7 +30,7 @@ public class Review extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BaseStatus status;
+    private BaseStatus status = BaseStatus.ACTIVE;
 
     /** 멤버 와의 연관관계의 주인 */
     @ManyToOne(fetch = LAZY)

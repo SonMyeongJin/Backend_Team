@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/review")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/review")
+    @PostMapping
     public BaseResponse<PostReviewResponse> createReview(@RequestBody PostReviewRequest postReviewRequest) {
         Long reviewId = reviewService.createReview(postReviewRequest.getFacilityId(),
                 postReviewRequest.getRanking(),

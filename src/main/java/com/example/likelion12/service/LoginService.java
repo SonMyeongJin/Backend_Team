@@ -2,6 +2,7 @@ package com.example.likelion12.service;
 
 import com.example.likelion12.domain.Member;
 import com.example.likelion12.domain.base.BaseStatus;
+
 import com.example.likelion12.dto.LoginResponse;
 import com.example.likelion12.repository.MemberRepository;
 import com.example.likelion12.util.*;
@@ -69,7 +70,7 @@ public class LoginService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/token")
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", clientId)
-                .queryParam("redirect_uri", "http://43.202.94.241:8080/auth/kakao/callback")
+                .queryParam("redirect_uri", redirectUri)
                 .queryParam("code", code);
 
         HttpHeaders headers = new HttpHeaders();
