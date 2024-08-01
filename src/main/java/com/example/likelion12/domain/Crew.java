@@ -73,4 +73,20 @@ public class Crew extends BaseTime {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "exercise_id")
     private Exercise exercise;
+
+    public Crew(String crewName, String crewImg, int totalRecruits, int crewCost,
+                String commentSimple, String comment,BaseGender gender, BaseLevel level,
+                ActivityRegion activityRegion, Facility facility, Exercise exercise){
+        this.crewName = crewName;
+        this.crewImg = crewImg;
+        this.totalRecruits = totalRecruits;
+        this.crewCost = crewCost;
+        this.commentSimple = commentSimple;
+        this.comment = comment;
+        this.gender = gender;
+        this.level = level;
+        this.activityRegion = activityRegion;
+        this.facility = facility;
+        this.exercise = exercise;
+    }
 }
