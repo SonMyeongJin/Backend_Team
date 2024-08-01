@@ -7,6 +7,7 @@ import com.example.likelion12.domain.base.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -76,7 +77,7 @@ public class Crew extends BaseTime {
 
     public Crew(String crewName, String crewImg, int totalRecruits, int crewCost,
                 String commentSimple, String comment,BaseGender gender, BaseLevel level,
-                ActivityRegion activityRegion, Facility facility, Exercise exercise){
+                ActivityRegion activityRegion, Facility facility, Exercise exercise, BaseStatus status){
         this.crewName = crewName;
         this.crewImg = crewImg;
         this.totalRecruits = totalRecruits;
@@ -88,5 +89,6 @@ public class Crew extends BaseTime {
         this.activityRegion = activityRegion;
         this.facility = facility;
         this.exercise = exercise;
+        this.status = status;
     }
 }
