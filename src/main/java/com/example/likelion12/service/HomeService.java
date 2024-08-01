@@ -1,5 +1,6 @@
 package com.example.likelion12.service;
 
+import com.example.likelion12.common.exception.CrewException;
 import com.example.likelion12.domain.Socialring;
 import com.example.likelion12.dto.Crew;
 import com.example.likelion12.dto.HomeResponse;
@@ -12,8 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_CREW_LIST;
 
 @Slf4j
 @Service
@@ -25,8 +29,10 @@ public class HomeService {
 
     public HomeResponse getHomeData(Long memberId) {
 
-        List<com.example.likelion12.domain.Crew> topCrews = crewRepository.findTop4ByMemberCrewListSize();
-        List<Socialring> topSocialrings = socialringRepository.findTop4ByOrderBySocialringDate();
+        List<com.example.likelion12.domain.Crew> topCrews = crewRepository.findTop4ByMemberCrewListSize()
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW_LIST));
+        List<Socialring> topSocialrings = socialringRepository.findTop4ByOrderBySocialringDate()
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW_LIST));
 
         // 소셜 DTO로 변환
         List<com.example.likelion12.dto.Socialring> deadline_imminent = topSocialrings.stream()
@@ -60,7 +66,7 @@ public class HomeService {
 
     // 날짜 포맷 변환 메소드
     private String formatDate(LocalDateTime date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(date);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return date.format(formatter);
     }
 }
