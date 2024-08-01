@@ -33,12 +33,12 @@ public class CrewController {
     /**
      * 크루 상세 조회
      */
-    @GetMapping("")
-    public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
-                                                             @RequestParam Long crewId){
-        log.info("[CrewController.getCrewDetail]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewId));
-    }
+//    @GetMapping("")
+//    public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
+//                                                             @RequestParam Long crewId){
+//        log.info("[CrewController.getCrewDetail]");
+//        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+//        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewId));
+//    }
 
 }
