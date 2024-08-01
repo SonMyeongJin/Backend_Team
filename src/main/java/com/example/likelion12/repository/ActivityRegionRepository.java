@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ActivityRegionRepository extends JpaRepository<ActivityRegion, Long> {
 
-    Optional<ActivityRegion> findByIdAndStatus(Long activityRegionId, BaseStatus status);
+    Optional<ActivityRegion> findByActivityRegionIdAndStatus(Long activityRegionId, BaseStatus status);
 }
