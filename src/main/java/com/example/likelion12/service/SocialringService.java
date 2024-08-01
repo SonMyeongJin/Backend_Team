@@ -67,6 +67,7 @@ public class SocialringService {
     }
 
     //소셜링 수정
+    @Transactional
     public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) {
         log.info("[SocialringService.modifySocialring]");
 

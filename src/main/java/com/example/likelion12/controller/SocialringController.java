@@ -1,6 +1,7 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
+import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
 import com.example.likelion12.dto.PatchSocialringModifyRequest;
 import com.example.likelion12.dto.PostSocialringRequest;
 import com.example.likelion12.dto.PostSocialringResponse;
@@ -8,6 +9,7 @@ import com.example.likelion12.service.SocialringService;
 import com.example.likelion12.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -31,11 +33,12 @@ public class SocialringController {
 
     //소셜링 수정
     @PatchMapping("")
-    public void modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam long socialringId,
+    public BaseResponse<Void> modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam long socialringId,
                                                                  @RequestBody PatchSocialringModifyRequest patchSocialringModifyRequest)
     {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         socialringService.modifySocialring(memberId,socialringId,patchSocialringModifyRequest);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
 
 }
