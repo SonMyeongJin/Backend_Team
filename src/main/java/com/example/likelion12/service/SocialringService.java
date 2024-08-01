@@ -86,57 +86,57 @@ public class SocialringService {
         //접근 멤버가 captain인지 유효성 검사
         memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);
 
-        if (patchSocialringModifyRequest.getSocialringName() != null) {
-            socialring.setSocialringName(patchSocialringModifyRequest.getSocialringName());
-        }
-        if (patchSocialringModifyRequest.getSocialringImg() != null) {
-            socialring.setSocialringImg(patchSocialringModifyRequest.getSocialringImg());
-        }
-        if (patchSocialringModifyRequest.getTotalRecruits() != null) {
-            socialring.setTotalRecruits(patchSocialringModifyRequest.getTotalRecruits());
-        }
-        if (patchSocialringModifyRequest.getSocialringDate() != null) {
-            socialring.setSocialringDate(patchSocialringModifyRequest.getSocialringDate());
-        }
-        if (patchSocialringModifyRequest.getSocialringCost() != null) {
-            socialring.setSocialringCost(patchSocialringModifyRequest.getSocialringCost());
-        }
-        if (patchSocialringModifyRequest.getComment() != null) {
-            socialring.setComment(patchSocialringModifyRequest.getComment());
-        }
-        if (patchSocialringModifyRequest.getCommentSimple() != null) {
-            socialring.setCommentSimple(patchSocialringModifyRequest.getCommentSimple());
-        }
-        if (patchSocialringModifyRequest.getGender() != null) {
-            socialring.setGender(patchSocialringModifyRequest.getGender());
-        }
-        if (patchSocialringModifyRequest.getLevel() != null) {
-            socialring.setLevel(patchSocialringModifyRequest.getLevel());
-        }
+        String newSocialringName = patchSocialringModifyRequest.getSocialringName()
+                == null ? socialring.getSocialringName() : patchSocialringModifyRequest.getSocialringName();
+        String newSocialringImg = patchSocialringModifyRequest.getSocialringImg()
+                == null ? socialring.getSocialringImg() : patchSocialringModifyRequest.getSocialringImg();
+        Integer newTotalRecruits = patchSocialringModifyRequest.getTotalRecruits()
+                == null ? socialring.getTotalRecruits() : patchSocialringModifyRequest.getTotalRecruits();
+        LocalDate newSocialringDate = patchSocialringModifyRequest.getSocialringDate()
+                == null ? socialring.getSocialringDate() : patchSocialringModifyRequest.getSocialringDate();
+        Integer newSocialringCost = patchSocialringModifyRequest.getSocialringCost()
+                == null ? socialring.getSocialringCost() : patchSocialringModifyRequest.getSocialringCost();
+        String newComment = patchSocialringModifyRequest.getComment()
+                == null ? socialring.getComment() : patchSocialringModifyRequest.getComment() ;
+        String newCommentSimple = patchSocialringModifyRequest.getCommentSimple()
+                == null ? socialring.getCommentSimple() : patchSocialringModifyRequest.getCommentSimple() ;
+        BaseGender newGender = patchSocialringModifyRequest.getGender()
+                == null ? socialring.getGender() : patchSocialringModifyRequest.getGender();
+        BaseLevel newLevel = patchSocialringModifyRequest.getLevel()
+                == null ? socialring.getLevel() : patchSocialringModifyRequest.getLevel();
 
-        //바꾸고자하는 값이 존재하는 값인지 유효성 검사
-        ActivityRegion activityRegion = activityRegionRepository.findByActivityRegionIdAndStatus
-                        (patchSocialringModifyRequest.getActivityRegionId(), BaseStatus.ACTIVE)
+        long newActivityRegionId = patchSocialringModifyRequest.getActivityRegionId()
+                == null ?  socialring.getActivityRegion().getActivityRegionId() :
+                //리퀘스트로 들어온값이 존재하는 값인지
+                activityRegionRepository.findByActivityRegionIdAndStatus(
+                        patchSocialringModifyRequest.getActivityRegionId(), BaseStatus.ACTIVE)
+                .orElseThrow(() -> new ActivityRegionException(CANNOT_FOUND_ACTIVITYREGION)).getActivityRegionId();
+        long newFacilityId = patchSocialringModifyRequest.getFacilityId()
+                == null ? socialring.getFacility().getFacilityId() :
+                facilityRepository.findByFacilityIdAndStatus(
+                                patchSocialringModifyRequest.getFacilityId(), BaseStatus.ACTIVE)
+                        .orElseThrow(() -> new ActivityRegionException(CANOOT_FOUND_FACILITY)).getFacilityId();
+        long newExerciseId = patchSocialringModifyRequest.getExerciseId()
+                == null ? socialring.getExercise().getExerciseId() :
+                exerciseRepository.findByExerciseIdAndStatus
+                                (patchSocialringModifyRequest.getExerciseId(), BaseStatus.ACTIVE)
+                        .orElseThrow(() -> new ExerciseException(CANNOT_FOUND_EXERCISE)).getExerciseId();
+
+        ActivityRegion activityRegion = activityRegionRepository.findByActivityRegionIdAndStatus(newActivityRegionId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new ActivityRegionException(CANNOT_FOUND_ACTIVITYREGION));
-        Facility facility = facilityRepository.findByFacilityIdAndStatus
-                        (patchSocialringModifyRequest.getFacilityId(), BaseStatus.ACTIVE)
+        Facility facility = facilityRepository.findByFacilityIdAndStatus(newFacilityId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new FacilityException(CANOOT_FOUND_FACILITY));
-        Exercise exercise = exerciseRepository.findByExerciseIdAndStatus
-                        (patchSocialringModifyRequest.getExerciseId(), BaseStatus.ACTIVE)
+        Exercise exercise = exerciseRepository.findByExerciseIdAndStatus(newExerciseId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new ExerciseException(CANNOT_FOUND_EXERCISE));
 
 
-        if (patchSocialringModifyRequest.getActivityRegionId() != null) {
-            socialring.setActivityRegion(activityRegion);
-        }
-        if (patchSocialringModifyRequest.getFacilityId() != null) {
-            socialring.setFacility(facility);
-        }
-        if (patchSocialringModifyRequest.getExerciseId() != null) {
-            socialring.setExercise(exercise);
-        }
+        //변경사항 업데이트 및 저장
+        socialring.UpdateSocialringInfo(newSocialringName, newSocialringImg, newTotalRecruits, newSocialringDate, newSocialringCost,
+                newComment, newCommentSimple, newGender, newLevel, activityRegion, facility, exercise);
+        socialringRepository.save(socialring);
 
     }
+
 
 
 }
