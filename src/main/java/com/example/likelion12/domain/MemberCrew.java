@@ -39,4 +39,10 @@ public class MemberCrew extends BaseTime {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public MemberCrew (BaseRole role, Crew crew, Member member, BaseStatus status){
+        this.role = role;
+        this.crew = crew;
+        this.member = member;
+        this.status = status;
+    }
 }
