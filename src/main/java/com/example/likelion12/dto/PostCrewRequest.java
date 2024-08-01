@@ -1,5 +1,10 @@
 package com.example.likelion12.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class PostCrewRequest {
     /**
      * 크루 등록 request dto
