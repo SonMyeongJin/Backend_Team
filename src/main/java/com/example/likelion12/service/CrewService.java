@@ -76,6 +76,5 @@ public class CrewService {
      */
     public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
         log.info("[CrewService.getCrewDetail]");
-        
     }
 }
