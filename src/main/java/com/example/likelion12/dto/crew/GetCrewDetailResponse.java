@@ -1,5 +1,6 @@
 package com.example.likelion12.dto.crew;
 
+import com.example.likelion12.domain.base.BaseRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ public class GetCrewDetailResponse {
     /**
      * 크루 상세 조회 response dto
      */
+    private BaseRole memberRole;
     private String crewName;
     private String crewImg;
     private String activityRegionName;
