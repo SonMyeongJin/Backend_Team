@@ -32,12 +32,17 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
      */
     CANNOT_FOUND_MEMBER(6000, HttpStatus.BAD_REQUEST.value(), "유저를 찾을 수 없습니다."),
     ALREADY_EXIST_EMAIL(6001, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이메일입니다."),
-    CANNOT_MEMBER_CAPTAIN(6002, HttpStatus.BAD_REQUEST.value(), "수정,삭제에 접근할수없는 권한입니다."),
 
     /**
      * 7000: socialring 관련
      */
-    CANNOT_FOUND_SOCIALRING(7000, HttpStatus.BAD_REQUEST.value(), "소셜링을 찾을 수 없습니다.");
+    CANNOT_FOUND_SOCIALRING(7000, HttpStatus.BAD_REQUEST.value(), "소셜링을 찾을 수 없습니다."),
+
+    /**
+     * 8000: membersocialring 관련
+     */
+    CANNOT_FOUND_MEMBERSOCIALRING(8000, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링을 찾을 수 없습니다."),
+    CANNOT_MEMBERSOCIALRING_CAPTAIN(8001, HttpStatus.BAD_REQUEST.value(), "소셜링 수정,삭제에 접근할수없는 권한입니다.");
 
 
     private final int code;
