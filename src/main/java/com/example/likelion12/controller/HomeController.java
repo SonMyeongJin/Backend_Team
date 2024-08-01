@@ -14,16 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class HomeController {
 
-    private JwtProvider jwtProvider;
-    private HomeService homeService;
-
+    private final JwtProvider jwtProvider;
+    private final HomeService homeService;
 
     @GetMapping("/main")
-    public BaseResponse<HomeResponse> getHomeData(@RequestHeader("Authorizatioin") String authorization){
+    public BaseResponse<HomeResponse> getHomeData(@RequestHeader("Authorization") String authorization){
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(homeService.getHomeData(memberId));
     }
 }
+

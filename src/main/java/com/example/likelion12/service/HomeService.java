@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HomeService {
 
-    private CrewRepository crewRepository;
-    private SocialringRepository socialringRepository;
+    private final CrewRepository crewRepository;
+    private final SocialringRepository socialringRepository;
 
     public HomeResponse getHomeData(Long memberId) {
 
