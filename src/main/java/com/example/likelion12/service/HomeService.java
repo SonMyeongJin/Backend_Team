@@ -37,10 +37,11 @@ public class HomeService {
         // 소셜 DTO로 변환
         List<com.example.likelion12.dto.Socialring> deadline_imminent = topSocialrings.stream()
                 .map(socialring -> new com.example.likelion12.dto.Socialring(
+                        socialring.getSocialringId(),
                         socialring.getSocialringName(),
                         socialring.getSocialringImg(),
                         formatDate(socialring.getSocialringDate()),
-                        socialring.getActivityRegion().getActivityRegionId(),
+                        socialring.getActivityRegion().getActivityRegionName(),
                         socialring.getTotalRecruits(),
                         socialring.getSocialringCost(),
                         socialring.getCommentSimple()
@@ -50,9 +51,10 @@ public class HomeService {
         // 크루 DTO로 변환
         List<Crew> hot_crew = topCrews.stream()
                 .map(crew -> new Crew(
+                        crew.getCrewId(),
                         crew.getCrewName(),
                         crew.getCrewImg(),
-                        crew.getActivityRegion().getActivityRegionId(),
+                        crew.getActivityRegion().getActivityRegionName(),
                         crew.getTotalRecruits(),
                         crew.getCrewCost(),
                         crew.getCommentSimple()
