@@ -8,6 +8,7 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
+import com.example.likelion12.dto.crew.GetCrewDetailResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.repository.*;
@@ -68,5 +69,13 @@ public class CrewService {
         //크루를 만든 사람이 CAPTAIN 이 되도록
         memberCrewService.createMemberCrew(member,crew);
         return new PostCrewResponse(crew.getCrewId());
+    }
+
+    /**
+     * 크루 상세 조회
+     */
+    public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
+        log.info("[CrewService.getCrewDetail]");
+        
     }
 }
