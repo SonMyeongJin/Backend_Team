@@ -38,7 +38,7 @@ public class CrewService {
     public PostCrewResponse createCrew(Long memberId, PostCrewRequest postCrewRequest){
         log.info("[CrewService.createCrew]");
 
-        Member member = memberRepository.findByIdAndStatus(memberId, BaseStatus.ACTIVE)
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         String crewName = postCrewRequest.getCrewName();
@@ -53,17 +53,17 @@ public class CrewService {
         BaseGender gender = postCrewRequest.getGender();
         BaseLevel level = postCrewRequest.getLevel();
 
-        ActivityRegion activityRegion = activityRegionRepository.findByIdAndStatus(activityRegionId, BaseStatus.ACTIVE)
+        ActivityRegion activityRegion = activityRegionRepository.findByActivityRegionIdAndStatus(activityRegionId, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new ActivityRegionException(CANNOT_FOUND_ACTIVITYREGION));
 
-        Facility facility = facilityRepository.findByIdAndStatus(facilityId, BaseStatus.ACTIVE)
+        Facility facility = facilityRepository.findByFacilityIdAndStatus(facilityId, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new FacilityException(CANOOT_FOUND_FACILITY));
 
-        Exercise exercise = exerciseRepository.findByIdAndStatus(exerciseId,BaseStatus.ACTIVE)
+        Exercise exercise = exerciseRepository.findByExerciseIdAndStatus(exerciseId,BaseStatus.ACTIVE)
                 .orElseThrow(()-> new ExerciseException(CANNOT_FOUND_EXERCISE));
 
         Crew crew = new Crew(crewName, crewImg, totalRecruits, crewCost,simpleComment,comment
-                ,gender,level,activityRegion,facility, exercise);
+                ,gender,level,activityRegion,facility, exercise, BaseStatus.ACTIVE);
         crewRepository.save(crew);
         //크루를 만든 사람이 CAPTAIN 이 되도록
         memberCrewService.createMemberCrew(member,crew);
