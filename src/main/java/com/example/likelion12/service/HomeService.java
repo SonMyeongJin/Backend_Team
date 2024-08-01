@@ -6,6 +6,7 @@ import com.example.likelion12.dto.Crew;
 import com.example.likelion12.dto.HomeResponse;
 import com.example.likelion12.repository.CrewRepository;
 import com.example.likelion12.repository.SocialringRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class HomeService {
     private final CrewRepository crewRepository;
     private final SocialringRepository socialringRepository;
 
+    @Transactional
     public HomeResponse getHomeData(Long memberId) {
 
         List<com.example.likelion12.domain.Crew> topCrews = crewRepository.findTop4ByMemberCrewListSize()
