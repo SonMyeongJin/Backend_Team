@@ -1,6 +1,7 @@
 package com.example.likelion12.repository;
 
 import com.example.likelion12.domain.Socialring;
+import com.example.likelion12.domain.base.BaseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
