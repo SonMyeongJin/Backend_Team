@@ -4,16 +4,15 @@ import com.example.likelion12.common.response.status.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-public class ExerciseException extends RuntimeException {
-
+public class CrewException extends RuntimeException{
     private final ResponseStatus exceptionStatus;
 
-    public ExerciseException(ResponseStatus exceptionStatus) {
+    public CrewException(ResponseStatus exceptionStatus) {
         super(exceptionStatus.getMessage());
         this.exceptionStatus = exceptionStatus;
     }
 
-    public ExerciseException(ResponseStatus exceptionStatus, String message) {
+    public CrewException(ResponseStatus exceptionStatus, String message) {
         super(message);
         this.exceptionStatus = exceptionStatus;
     }
