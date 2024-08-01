@@ -7,13 +7,12 @@ import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @AllArgsConstructor
+@RequestMapping("/crew")
 public class CrewController {
 
     private final JwtProvider jwtProvider;
@@ -22,6 +21,7 @@ public class CrewController {
     /**
      * 크루 등록
      */
+    @PostMapping("")
     public BaseResponse<PostCrewResponse> createCrew(@RequestHeader("Authorization") String authorization,
                                                      @RequestBody PostCrewRequest postCrewRequest){
         log.info("[CrewController.createCrew]");
