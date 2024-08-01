@@ -1,4 +1,4 @@
-package com.example.likelion12.dto;
+package com.example.likelion12.dto.crew;
 
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
