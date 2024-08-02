@@ -55,4 +55,8 @@ public class Review extends BaseTime {
         this.comment = comment;
         this.member = member;
     }
+
+    public void setStatus(BaseStatus status) {
+        this.status = status;
+    }
 }

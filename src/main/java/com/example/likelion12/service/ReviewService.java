@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
+import static com.example.likelion12.domain.base.BaseStatus.DELETE;
 
 @Service
 public class ReviewService {
@@ -65,8 +66,13 @@ public class ReviewService {
             throw new ReviewException(CANNOT_FOUND_REVIEW);
         }
 
-        // 리뷰삭제
-        reviewRepository.deleteById(reviewId);
+        //리뷰id로 리뷰 찾고
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException(CANNOT_FOUND_REVIEW));
+
+        // 찾은 리뷰의 상태를 Delete로 변경하고
+        review.setStatus(DELETE);
+
         return true;
     }
 }
