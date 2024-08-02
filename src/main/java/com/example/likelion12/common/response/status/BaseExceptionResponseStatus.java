@@ -38,12 +38,14 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
      */
     CANNOT_FOUND_CREW_LIST(7000, HttpStatus.BAD_REQUEST.value(), "크루 리스트를 찾을 수 없습니다."),
     CANNOT_FOUND_CREW(7001, HttpStatus.BAD_REQUEST.value(), "크루를 찾을 수 없습니다."),
+    ALREADY_FULL_CREW(7002, HttpStatus.BAD_REQUEST.value(), "더이상 크루에 참여하실 수 없습니다."),
 
     /**
      * 8000 : Member crew 관련
      */
     CANNOT_FOUND_MEMBERCREW(8000, HttpStatus.BAD_REQUEST.value(), "멤버_크루를 찾을 수 없습니다."),
-    CANNOT_FOUND_MEMBERCREW_LIST(7001, HttpStatus.BAD_REQUEST.value(), "멤버_크루 리스트를 찾을 수 없습니다.");
+    CANNOT_FOUND_MEMBERCREW_LIST(8001, HttpStatus.BAD_REQUEST.value(), "멤버_크루 리스트를 찾을 수 없습니다."),
+    ALREADY_EXIST(8002, HttpStatus.BAD_REQUEST.value(), "이미 등록된 멤버입니다.");
 
 
     private final int code;

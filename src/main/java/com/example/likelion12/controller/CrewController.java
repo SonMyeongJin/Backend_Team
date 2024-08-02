@@ -41,4 +41,16 @@ public class CrewController {
         return new BaseResponse<>(crewService.getCrewDetail(memberId, crewId));
     }
 
+    /**
+     * 크루 참여하기
+     */
+    @PostMapping("/join")
+    public BaseResponse<Void> joinCrew(@RequestHeader("Authorization") String authorization,
+                                                        @RequestParam Long crewId){
+        log.info("[CrewController.joinCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        crewService.joinCrew(memberId,crewId);
+        return new BaseResponse<>(null);
+    }
+
 }
