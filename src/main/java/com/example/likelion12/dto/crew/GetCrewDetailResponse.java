@@ -19,6 +19,7 @@ public class GetCrewDetailResponse {
     private String exerciseName;
     private int totalRecruits;
     private int crewCost;
+    private String comment;
     private List<Crews> members;
     private List<Recommands> recommands;
 
