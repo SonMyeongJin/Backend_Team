@@ -1,6 +1,7 @@
 package com.example.likelion12.service;
 
 import com.example.likelion12.common.exception.MemberException;
+import com.example.likelion12.common.exception.ReviewException;
 import com.example.likelion12.domain.Facility;
 import com.example.likelion12.domain.Member;
 import com.example.likelion12.domain.Review;
@@ -44,5 +45,22 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(review);
 
         return savedReview.getReviewId();
+    }
+
+    @Transactional
+    public boolean deleteReview(Long reviewId, Long memberId) {
+
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+
+        // 리뷰가 존재하는지 확인
+        boolean reviewExists = reviewRepository.existsById(reviewId);
+        if (!reviewExists) {
+            throw new ReviewException("리뷰를 찾을 수 없습니다.");
+        }
+
+        // 리뷰삭제
+        reviewRepository.deleteById(reviewId);
+        return true;
     }
 }
