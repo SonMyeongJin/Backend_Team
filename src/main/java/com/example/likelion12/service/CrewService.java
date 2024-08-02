@@ -4,7 +4,6 @@ import com.example.likelion12.common.exception.*;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
-import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
@@ -13,11 +12,8 @@ import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.undo.CannotRedoException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -130,7 +126,7 @@ public class CrewService {
 
         //크루 아이디로 참여하려는 크루 찾기
         if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crewId, BaseStatus.ACTIVE)){
-            throw new MemberCrewException(ALREADY_EXIST);
+            throw new MemberCrewException(ALREADY_EXIST_IN_CREW);
         }
         Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
