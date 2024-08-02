@@ -1,4 +1,4 @@
-package com.example.likelion12.dto;
+package com.example.likelion12.dto.socialring;
 
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
@@ -10,6 +10,9 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class PostSocialringRequest {
+    /**
+     * 소셜링 등록 request dto
+     */
     private String socialringName;
     private String socialringImg;
     private long activityRegionId;

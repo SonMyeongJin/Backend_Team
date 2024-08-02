@@ -33,7 +33,6 @@ public class MemberSocialringService {
     /**
      * 소셜링 수정,삭제 시 접근하는 member가  CAPTAIN 인지 확인
      */
-    @Transactional
     public void ConfirmCaptainMemberSocialring(MemberSocialring memberSocialring){
         log.info("[MemberSocialringService.ConfirmCaptainMemberSocialring]");
 
