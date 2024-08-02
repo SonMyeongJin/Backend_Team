@@ -45,11 +45,12 @@ public class CrewController {
      * 크루 참여하기
      */
     @PostMapping("/join")
-    public BaseResponse<GetCrewDetailResponse> joinCrew(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<Void> joinCrew(@RequestHeader("Authorization") String authorization,
                                                         @RequestParam Long crewId){
         log.info("[CrewController.joinCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.joinCrew(memberId,crewId));
+        crewService.joinCrew(memberId,crewId);
+        return new BaseResponse<>(null);
     }
 
 }

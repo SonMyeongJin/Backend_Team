@@ -122,13 +122,16 @@ public class CrewService {
      * 크루 참여하기
      */
     @Transactional
-    public GetCrewDetailResponse joinCrew(Long memberId, Long crewId){
+    public void joinCrew(Long memberId, Long crewId){
         log.info("[CrewService.joinCrew]");
         // 참여하려는 member 찾기
         Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         //크루 아이디로 참여하려는 크루 찾기
+        if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crewId, BaseStatus.ACTIVE)){
+            throw new MemberCrewException(ALREADY_EXIST);
+        }
         Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
 
@@ -143,30 +146,9 @@ public class CrewService {
         if(totalRecruits > currentCrews){
             // 모집인원이 현재인원보다 많으니까 가입 가능
             memberCrewService.createMemberCrew(member,crew); // member_crew 테이블에 crew 로 저장
-            List<GetCrewDetailResponse.Crews> memberImgList = memberCrewList.stream()
-                    .map(mc -> new GetCrewDetailResponse.Crews(mc.getMember().getMemberImg()))
-                    .collect(Collectors.toList()); // 이미지 리스트로 변환
-
-            List<GetCrewDetailResponse.Recommands> recommandsList = crewRepository.findTop3ByExerciseIdAndStatus(
-                    crew.getExercise().getExerciseId(),
-                    BaseStatus.ACTIVE,
-                    Pageable.ofSize(3))
-                    .stream().map(crews -> new GetCrewDetailResponse.Recommands(
-                    crews.getCrewId(),
-                    crews.getCrewName(),
-                    crews.getCrewImg(),
-                    crews.getCrewCost(),
-                    crews.getActivityRegion().getActivityRegionName(),
-                    crews.getExercise().getExerciseName(),
-                    crews.getMemberCrewList().size(),
-                    crews.getTotalRecruits()
-            )).collect(Collectors.toList());
-
-            return new GetCrewDetailResponse(BaseRole.CREW, crew.getCrewName(), crew.getCrewImg(), crew.getActivityRegion().getActivityRegionName(),
-                    crew.getExercise().getExerciseName(), totalRecruits, crew.getCrewCost(), crew.getComment(), memberImgList, recommandsList);
         }else{
             // 같으면 전원 모집인 경우라서 가입 불가능
-            throw  new CrewException(ALREADY_FULL_CREW);
+            throw new CrewException(ALREADY_FULL_CREW);
         }
     }
 }
