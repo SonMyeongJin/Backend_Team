@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -28,7 +29,7 @@ public class Review extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BaseStatus status;
+    private BaseStatus status = BaseStatus.ACTIVE;
 
     /** 멤버 와의 연관관계의 주인 */
     @ManyToOne(fetch = LAZY)
@@ -39,4 +40,12 @@ public class Review extends BaseTime {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "facility_id")
     private Facility facility;
+
+    public void setReview(Facility facility , int ranking, String comment , Member member)
+    {
+        this.facility = facility;
+        this.ranking = ranking;
+        this.comment = comment;
+        this.member = member;
+    }
 }
