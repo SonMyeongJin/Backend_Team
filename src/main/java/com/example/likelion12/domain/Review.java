@@ -12,7 +12,6 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Review extends BaseTime {
@@ -41,4 +40,12 @@ public class Review extends BaseTime {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "facility_id")
     private Facility facility;
+
+    public void setReview(Facility facility , int ranking, String comment , Member member)
+    {
+        this.facility = facility;
+        this.ranking = ranking;
+        this.comment = comment;
+        this.member = member;
+    }
 }
