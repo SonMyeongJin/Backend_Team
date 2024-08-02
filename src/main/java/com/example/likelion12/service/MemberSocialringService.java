@@ -21,7 +21,7 @@ public class MemberSocialringService {
     private final MemberSocialringRepository memberSocialringRepository;
 
     /**
-     * 소셜링 등록 시 소셜링 만든 사람이 CAPTAIN 이 되도록
+     * 소셜링 등록 시 소셜링 만든 사람이 BaseRole.CAPTAIN 이 되도록
      */
     @Transactional
     public void createMemberSocialring(Member member, Socialring socialring){
@@ -39,6 +39,16 @@ public class MemberSocialringService {
         if (!BaseRole.CAPTAIN.equals(memberSocialring.getRole())) {
             throw new MemberSocialringException(CANNOT_MEMBERSOCIALRING_CAPTAIN);
         }
+    }
+
+    /**
+     * 소셜링 참여 시 BaseRole.CREW로 들어가도록
+     */
+    @Transactional
+    public void joinMemberSocialring(Member member, Socialring socialring){
+        log.info("[MemberSocialringService.createMemberSocialring]");
+        MemberSocialring memberSocialring = new MemberSocialring(BaseRole.CREW ,socialring,member, BaseStatus.ACTIVE);
+        memberSocialringRepository.save(memberSocialring);
     }
 
 }
