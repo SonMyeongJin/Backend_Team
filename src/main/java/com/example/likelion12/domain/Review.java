@@ -48,4 +48,12 @@ public class Review extends BaseTime {
         this.comment = comment;
         this.member = member;
     }
+
+    public void updateReview(Facility facility , int ranking, String comment )
+    {
+        this.facility = facility;
+        this.ranking = ranking;
+        this.comment = comment;
+    }
+
 }

@@ -63,4 +63,32 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
         return true;
     }
+
+    @Transactional
+    public void updateReview(Long reviewId , Long facilityId, int ranking, String comment, Long memberId) {
+
+        // review_id로 review찾고
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewException("리뷰를 찾을 수 없습니다."));
+        // memberId로 member 확인
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+        // facilityId로 facility 찾고
+        Facility facility = facilityRepository.findById(facilityId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid facility ID"));
+
+        // 리뷰가 작성한 member와 동일한지 확인
+        //if (!review.getMember().equals(member)) {
+        //    throw new ReviewException("리뷰를 수정할 권한이 없습니다.");
+        //}
+
+        // 받은값들로 review 수정해서
+        review.updateReview(facility, ranking, comment);
+
+        // 레퍼지토리에 저장하고
+        reviewRepository.updateReview(reviewId, ranking, comment , facility);
+
+        // 성공Response 반환
+
+    }
 }
