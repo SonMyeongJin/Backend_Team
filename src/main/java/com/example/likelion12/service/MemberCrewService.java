@@ -1,5 +1,6 @@
 package com.example.likelion12.service;
 
+import com.example.likelion12.common.exception.MemberCrewException;
 import com.example.likelion12.domain.Crew;
 import com.example.likelion12.domain.Member;
 import com.example.likelion12.domain.MemberCrew;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.NOT_MEMBERCREW_CAPTAIN;
 
 @Slf4j
 @Service
@@ -37,5 +40,16 @@ public class MemberCrewService {
         log.info("[MemberCrewService.createMemberCrew]");
         MemberCrew memberCrew = new MemberCrew(BaseRole.CREW ,crew,member, BaseStatus.ACTIVE);
         memberCrewRepository.save(memberCrew);
+    }
+
+    /**
+     * 크루 수정,삭제 시 접근하는 member가  CAPTAIN 인지 확인
+     */
+    public void ConfirmCaptainMemberCrew(MemberCrew memberCrew) {
+        log.info("[MemberCrewService.ConfirmCaptainMemberCrew]");
+
+        if (!BaseRole.CAPTAIN.equals(memberCrew.getRole())) {
+            throw new MemberCrewException(NOT_MEMBERCREW_CAPTAIN);
+        }
     }
 }
