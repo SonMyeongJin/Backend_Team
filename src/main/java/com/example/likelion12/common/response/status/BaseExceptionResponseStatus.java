@@ -43,7 +43,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
      * 8000: membersocialring 관련
      */
     CANNOT_FOUND_MEMBERSOCIALRING(8000, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링을 찾을 수 없습니다."),
-    CANNOT_MEMBERSOCIALRING_CAPTAIN(8001, HttpStatus.BAD_REQUEST.value(), "소셜링 수정,삭제에 접근할수없는 권한입니다."),
+    NOT_MEMBERSOCIALRING_CAPTAIN(8001, HttpStatus.BAD_REQUEST.value(), "소셜링 수정,삭제에 접근할수없는 권한입니다."),
 
     /**
      * 9000 : crew 관련
@@ -58,7 +58,9 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
      */
     CANNOT_FOUND_MEMBERCREW(10000, HttpStatus.BAD_REQUEST.value(), "멤버_크루를 찾을 수 없습니다."),
     CANNOT_FOUND_MEMBERCREW_LIST(10001, HttpStatus.BAD_REQUEST.value(), "멤버_크루 리스트를 찾을 수 없습니다."),
-    ALREADY_EXIST(10002, HttpStatus.BAD_REQUEST.value(), "이미 등록된 멤버입니다.");
+    ALREADY_EXIST(10002, HttpStatus.BAD_REQUEST.value(), "이미 등록된 멤버입니다."),
+    NOT_MEMBERCREW_CAPTAIN(10003, HttpStatus.BAD_REQUEST.value(), "크루 수정,삭제에 접근할수없는 권한입니다."),
+    NOT_CREW_MEMBERCREW(10004, HttpStatus.BAD_REQUEST.value(), "해당 크루에 참여 상태가 아닙니다.");
 
 
 
