@@ -23,9 +23,19 @@ public class MemberCrewService {
      * 크루 등록 시 크루 만든 사람이 CAPTAIN 이 되도록
      */
     @Transactional
+    public void createMemberCaptain(Member member, Crew crew){
+        log.info("[MemberCrewService.createMemberCaptain]");
+        MemberCrew memberCrew = new MemberCrew(BaseRole.CAPTAIN,crew,member, BaseStatus.ACTIVE);
+        memberCrewRepository.save(memberCrew);
+    }
+
+    /**
+     * 크루 참여 시 CREW 로 들어가도록
+     */
+    @Transactional
     public void createMemberCrew(Member member, Crew crew){
         log.info("[MemberCrewService.createMemberCrew]");
-        MemberCrew memberCrew = new MemberCrew(BaseRole.CAPTAIN,crew,member, BaseStatus.ACTIVE);
+        MemberCrew memberCrew = new MemberCrew(BaseRole.CREW ,crew,member, BaseStatus.ACTIVE);
         memberCrewRepository.save(memberCrew);
     }
 }
