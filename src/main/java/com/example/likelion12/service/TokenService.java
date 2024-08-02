@@ -29,8 +29,8 @@ public class TokenService {
         return result != null && result;
     }
 
-    public void invalidateToken(String githubId) {
+    public void invalidateToken(Long memberId) {
         // redis 에서 토큰 삭제
-        redisTemplate.delete(githubId);
+        redisTemplate.delete(String.valueOf(memberId));
     }
 }
