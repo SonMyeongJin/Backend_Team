@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_MEMBER;
+import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_REVIEW;
 
 @Service
 public class ReviewService {
@@ -56,7 +57,7 @@ public class ReviewService {
         // 리뷰가 존재하는지 확인
         boolean reviewExists = reviewRepository.existsById(reviewId);
         if (!reviewExists) {
-            throw new ReviewException("리뷰를 찾을 수 없습니다.");
+            throw new ReviewException(CANNOT_FOUND_REVIEW);
         }
 
         // 리뷰삭제
