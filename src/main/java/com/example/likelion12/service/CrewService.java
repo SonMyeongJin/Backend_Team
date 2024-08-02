@@ -4,7 +4,6 @@ import com.example.likelion12.common.exception.*;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
-import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
@@ -13,7 +12,6 @@ import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -150,5 +148,39 @@ public class CrewService {
             // 같으면 전원 모집인 경우라서 가입 불가능
             throw new CrewException(ALREADY_FULL_CREW);
         }
+    }
+
+    /**
+     * 크루 삭제하기
+     */
+    @Transactional
+    public void deleteCrew(Long memberId, Long crewId) {
+        log.info("[CrewService.deleteCrew]");
+
+        // 크루를 삭제하고자 하는  member
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+
+        //삭제하고자 하는 크루
+        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
+
+        //삭제하고자 하는 크루의 멤버크루
+        //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
+
+        //멤버가 CAPTAIN 권한인지 유효성 검사
+        memberCrewService.ConfirmCaptainMemberCrew(memberCrew);
+
+        //삭제하고자 하는 크루의 멤버크루리스트
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()->new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
+
+        // 멤버 크루리스트 삭제
+        memberCrewList.forEach(mc -> memberCrewRepository.delete(mc));
+
+        //크루 삭제
+        crewRepository.delete(crew);
     }
 }
