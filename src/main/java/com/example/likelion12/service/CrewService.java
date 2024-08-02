@@ -183,4 +183,32 @@ public class CrewService {
         //크루 삭제
         crewRepository.delete(crew);
     }
+
+    /**
+     * 크루 탈퇴하기
+     */
+    @Transactional
+    public void cancelCrew(Long memberId, Long crewId) {
+        log.info("[CrewService.cancelCrew]");
+
+        // 크루를 탈퇴하고자 하는  member
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+
+        //탈퇴하고자 하는 크루
+        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
+
+        //탈퇴하고자 하는 크루의 멤버크루
+        //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
+
+        //CAPTAIN일 경우 크루 삭제
+        if(memberCrewService.ConfirmCaptainMemberCrew(memberCrew))
+            deleteCrew(memberId,crewId);
+        else //크루 탈퇴
+        memberCrewRepository.delete(memberCrew);
+
+    }
 }
