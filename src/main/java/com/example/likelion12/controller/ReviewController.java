@@ -28,6 +28,7 @@ public class ReviewController {
                 memberId);
         PostReviewResponse response = new PostReviewResponse(reviewId);
         return new BaseResponse<>(response);
+
     }
 
     @PatchMapping("/delete")
