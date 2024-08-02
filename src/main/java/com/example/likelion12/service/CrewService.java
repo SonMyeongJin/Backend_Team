@@ -4,22 +4,22 @@ import com.example.likelion12.common.exception.*;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
-import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.undo.CannotRedoException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
@@ -75,6 +75,35 @@ public class CrewService {
         //크루를 만든 사람이 CAPTAIN 이 되도록
         memberCrewService.createMemberCaptain(member,crew);
         return new PostCrewResponse(crew.getCrewId());
+    }
+
+    /**
+     * 크루  조회
+     */
+    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, List<Long> crewIds) {
+        log.info("[CrewService.getCrewInquiries]");
+
+        List<GetCrewInquiryResponse> getCrewInquiryResponses = new ArrayList<>();
+
+        for (Long crewId : crewIds) {
+            // 조회하고자 하는 크루
+            Optional<Crew> optionalCrew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE);
+
+            // 크루가 존재할 경우에만 응답 리스트에 추가
+            optionalCrew.ifPresent(crew -> {
+                GetCrewInquiryResponse response = new GetCrewInquiryResponse(
+                        crew.getCrewName(),
+                        crew.getCrewImg(),
+                        crew.getActivityRegion().getActivityRegionName(),
+                        crew.getExercise().getExerciseName(),
+                        crew.getLevel(),
+                        crew.getCommentSimple()
+                );
+                getCrewInquiryResponses.add(response);
+            });
+        }
+
+        return getCrewInquiryResponses;
     }
 
     /**
@@ -151,4 +180,5 @@ public class CrewService {
             throw new CrewException(ALREADY_FULL_CREW);
         }
     }
+
 }
