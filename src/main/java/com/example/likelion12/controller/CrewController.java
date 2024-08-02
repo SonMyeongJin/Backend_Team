@@ -65,4 +65,16 @@ public class CrewController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 크루 탈퇴하기
+     */
+    @PatchMapping("/cancel")
+    public BaseResponse<Void> cancelCrew(@RequestHeader("Authorization") String authorization,
+                                         @RequestParam Long crewId){
+        log.info("[CrewController.deleteCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        crewService.cancelCrew(memberId,crewId);
+        return new BaseResponse<>(null);
+    }
+
 }
