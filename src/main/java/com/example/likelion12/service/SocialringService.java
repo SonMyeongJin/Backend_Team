@@ -5,9 +5,9 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
-import com.example.likelion12.dto.PatchSocialringModifyRequest;
-import com.example.likelion12.dto.PostSocialringRequest;
-import com.example.likelion12.dto.PostSocialringResponse;
+import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
+import com.example.likelion12.dto.socialring.PostSocialringRequest;
+import com.example.likelion12.dto.socialring.PostSocialringResponse;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -105,21 +105,22 @@ public class SocialringService {
         BaseLevel newLevel = patchSocialringModifyRequest.getLevel()
                 == null ? socialring.getLevel() : patchSocialringModifyRequest.getLevel();
 
-        long newActivityRegionId = patchSocialringModifyRequest.getActivityRegionId()
-                == null ?  socialring.getActivityRegion().getActivityRegionId() :
-                //리퀘스트로 들어온값이 존재하는 값인지
-                activityRegionRepository.findByActivityRegionIdAndStatus(
-                        patchSocialringModifyRequest.getActivityRegionId(), BaseStatus.ACTIVE)
+        long newActivityRegionId =
+                patchSocialringModifyRequest.getActivityRegionName() == null ?
+                        socialring.getActivityRegion().getActivityRegionId() :
+                //리퀘스트로 들어온값이 존재하는 값인지 네임으로 찾아서 아이디값 반환 후 아이디값 수정
+                activityRegionRepository.findByActivityRegionNameAndStatus(
+                        patchSocialringModifyRequest.getActivityRegionName(), BaseStatus.ACTIVE)
                 .orElseThrow(() -> new ActivityRegionException(CANNOT_FOUND_ACTIVITYREGION)).getActivityRegionId();
-        long newFacilityId = patchSocialringModifyRequest.getFacilityId()
+        long newFacilityId = patchSocialringModifyRequest.getFacilityName()
                 == null ? socialring.getFacility().getFacilityId() :
-                facilityRepository.findByFacilityIdAndStatus(
-                                patchSocialringModifyRequest.getFacilityId(), BaseStatus.ACTIVE)
+                facilityRepository.findByFacilityNameAndStatus(
+                                patchSocialringModifyRequest.getFacilityName(), BaseStatus.ACTIVE)
                         .orElseThrow(() -> new ActivityRegionException(CANOOT_FOUND_FACILITY)).getFacilityId();
-        long newExerciseId = patchSocialringModifyRequest.getExerciseId()
+        long newExerciseId = patchSocialringModifyRequest.getExerciseName()
                 == null ? socialring.getExercise().getExerciseId() :
-                exerciseRepository.findByExerciseIdAndStatus
-                                (patchSocialringModifyRequest.getExerciseId(), BaseStatus.ACTIVE)
+                exerciseRepository.findByExerciseNameAndStatus
+                                (patchSocialringModifyRequest.getExerciseName(), BaseStatus.ACTIVE)
                         .orElseThrow(() -> new ExerciseException(CANNOT_FOUND_EXERCISE)).getExerciseId();
 
         ActivityRegion activityRegion = activityRegionRepository.findByActivityRegionIdAndStatus(newActivityRegionId, BaseStatus.ACTIVE)
