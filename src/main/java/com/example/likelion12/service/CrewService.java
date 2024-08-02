@@ -86,21 +86,21 @@ public class CrewService {
         List<GetCrewInquiryResponse> getCrewInquiryResponses = new ArrayList<>();
 
         for (Long crewId : crewIds) {
-            // 조회하고자 하는 크루
-            Optional<Crew> optionalCrew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE);
 
-            // 크루가 존재할 경우에만 응답 리스트에 추가
-            optionalCrew.ifPresent(crew -> {
-                GetCrewInquiryResponse response = new GetCrewInquiryResponse(
-                        crew.getCrewName(),
-                        crew.getCrewImg(),
-                        crew.getActivityRegion().getActivityRegionName(),
-                        crew.getExercise().getExerciseName(),
-                        crew.getLevel(),
-                        crew.getCommentSimple()
-                );
-                getCrewInquiryResponses.add(response);
-            });
+            //조회하고자 하는 크루
+            Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+                    .orElseThrow(() -> new CrewException(CANNOT_FOUND_CREW));
+
+            GetCrewInquiryResponse response = new GetCrewInquiryResponse(
+                    crew.getCrewName(),
+                    crew.getCrewImg(),
+                    crew.getActivityRegion().getActivityRegionName(),
+                    crew.getExercise().getExerciseName(),
+                    crew.getLevel(),
+                    crew.getCommentSimple()
+            );
+
+            getCrewInquiryResponses.add(response);
         }
 
         return getCrewInquiryResponses;
