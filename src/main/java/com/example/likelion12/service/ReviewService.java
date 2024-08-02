@@ -38,6 +38,11 @@ public class ReviewService {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new FacilityException(CANOOT_FOUND_FACILITY));
 
+        // 이미 같은 멤버가 같은 체육관에 리뷰를 작성하면 예외를 발생시키고
+        if (reviewRepository.existsByMemberAndFacility(member, facility)) {
+            throw new ReviewException(ALREADY_EXIST_REVIEW);
+        }
+
         //리뷰에 받아온 값들 넣고
         Review review = new Review();
         review.setReview(facility, ranking, comment, member);

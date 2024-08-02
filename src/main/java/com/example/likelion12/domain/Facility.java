@@ -24,7 +24,7 @@ public class Facility extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "facility_id", nullable = false)
-    private long facilityId;
+    private Long facilityId;
 
     @Column(nullable = false)
     private String facilityName;

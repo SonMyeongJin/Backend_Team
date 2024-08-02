@@ -19,7 +19,7 @@ public class Review extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id", nullable = false)
-    private long reviewId;
+    private Long reviewId;
 
     @Column(nullable = false)
     private String comment;
