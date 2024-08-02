@@ -5,16 +5,20 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
+import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
 import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
 import com.example.likelion12.dto.socialring.PostSocialringRequest;
 import com.example.likelion12.dto.socialring.PostSocialringResponse;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
 
@@ -30,7 +34,9 @@ public class SocialringService {
     private final ActivityRegionRepository activityRegionRepository;
     private final MemberSocialringRepository memberSocialringRepository;
 
-    //소셜링등록
+    /**
+     * 소셜링 등록
+     */
     @Transactional
     public PostSocialringResponse createSocialring(Long memberId, PostSocialringRequest postSocialringRequest) {
         log.info("[SocialringService.createSocialring]");
@@ -66,7 +72,9 @@ public class SocialringService {
         return new PostSocialringResponse(socialring.getSocialringId());
     }
 
-    //소셜링 수정
+    /**
+     * 소셜링 수정
+     */
     @Transactional
     public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) {
         log.info("[SocialringService.modifySocialring]");
@@ -138,6 +146,49 @@ public class SocialringService {
 
     }
 
+    /**
+     * 소셜링 상세 조회
+     */
+    @Transactional
+    public GetSocialringDetailResponse getSocialringDetail(Long memberId, Long socialringId) {
+        log.info("[SocialringService.getSocialringDetail]");
 
+        // 상세조회하고자 하는 소셜링
+        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
+        // 상세조회하고자 하는 멤버의 멤버소셜링
+        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
+                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+        // 소셜링에 등록된 멤버 리스트 추출
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
+                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+        // 소셜링에 등록된 멤버 리스트에서 사진만 추출해서 반환
+        List<GetSocialringDetailResponse.Socialrings> memberImgList = memberSocialringList.stream()
+                .map(MemberSocialring -> new GetSocialringDetailResponse.Socialrings(memberSocialring.getMember().getMemberImg()))
+                .collect(Collectors.toList());
+
+        List<GetSocialringDetailResponse.Recommands> recommandsList = socialringRepository.findTop3ByActivityRegionIdAndStatus(
+                socialring.getActivityRegion().getActivityRegionId(), BaseStatus.ACTIVE, Pageable.ofSize(3))
+                .stream().map(socialrings -> new GetSocialringDetailResponse.Recommands(
+                socialrings.getSocialringId(),
+                socialrings.getSocialringName(),
+                socialrings.getSocialringImg(),
+                socialrings.getActivityRegion().getActivityRegionName(),
+                socialrings.getSocialringDate(),
+                socialrings.getSocialringCost(),
+                socialrings.getCommentSimple(),
+                socialrings.getMemberSocialringList().size(),
+                socialrings.getTotalRecruits()
+        )).collect(Collectors.toList());
+
+        GetSocialringDetailResponse getSocialringDetailResponse = new GetSocialringDetailResponse(memberSocialring.getRole(),socialring.getSocialringName(),
+                socialring.getSocialringImg(), socialring.getActivityRegion().getActivityRegionName(),socialring.getFacility().getFacilityName(),
+                socialring.getExercise().getExerciseName(),socialring.getTotalRecruits(),socialring.getSocialringDate(),
+                socialring.getSocialringCost(),socialring.getComment(),socialring.getCommentSimple(),socialring.getGender(),
+                socialring.getLevel(),memberImgList,recommandsList);
+
+        return getSocialringDetailResponse;
+
+    }
 }

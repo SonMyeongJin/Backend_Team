@@ -40,10 +40,11 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
 
 
     /**
-     * 8000: membersocialring 관련
+     * 8000: member socialring 관련
      */
     CANNOT_FOUND_MEMBERSOCIALRING(8000, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링을 찾을 수 없습니다."),
     CANNOT_MEMBERSOCIALRING_CAPTAIN(8001, HttpStatus.BAD_REQUEST.value(), "소셜링 수정,삭제에 접근할수없는 권한입니다."),
+    CANNOT_FOUND_MEMBERSOCIALRING_LIST(8002, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링 리스트를 찾을 수 없습니다."),
 
     /**
      * 9000 : crew 관련
