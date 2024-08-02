@@ -43,13 +43,14 @@ public class MemberCrewService {
     }
 
     /**
-     * 크루 수정,삭제 시 접근하는 member가  CAPTAIN 인지 확인
+     * 크루 수정,삭제 시 접근하는 member가 CAPTAIN 인지 확인
      */
-    public void ConfirmCaptainMemberCrew(MemberCrew memberCrew) {
+    public boolean ConfirmCaptainMemberCrew(MemberCrew memberCrew) {
         log.info("[MemberCrewService.ConfirmCaptainMemberCrew]");
 
         if (!BaseRole.CAPTAIN.equals(memberCrew.getRole())) {
             throw new MemberCrewException(NOT_MEMBERCREW_CAPTAIN);
         }
+        return true;
     }
 }
