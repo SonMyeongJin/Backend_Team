@@ -53,4 +53,16 @@ public class CrewController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 크루 삭제하기
+     */
+    @PatchMapping("/delete")
+    public BaseResponse<Void> deleteCrew(@RequestHeader("Authorization") String authorization,
+                                         @RequestParam Long crewId){
+        log.info("[CrewController.deleteCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        crewService.deleteCrew(memberId,crewId);
+        return new BaseResponse<>(null);
+    }
+
 }
