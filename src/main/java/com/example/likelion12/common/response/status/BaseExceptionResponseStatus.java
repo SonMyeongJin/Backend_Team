@@ -34,18 +34,32 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     ALREADY_EXIST_EMAIL(6001, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 이메일입니다."),
 
     /**
-     * 7000 : crew 관련
+     * 7000: socialring 관련
      */
-    CANNOT_FOUND_CREW_LIST(7000, HttpStatus.BAD_REQUEST.value(), "크루 리스트를 찾을 수 없습니다."),
-    CANNOT_FOUND_CREW(7001, HttpStatus.BAD_REQUEST.value(), "크루를 찾을 수 없습니다."),
-    ALREADY_FULL_CREW(7002, HttpStatus.BAD_REQUEST.value(), "더이상 크루에 참여하실 수 없습니다."),
+    CANNOT_FOUND_SOCIALRING(7000, HttpStatus.BAD_REQUEST.value(), "소셜링을 찾을 수 없습니다."),
+
 
     /**
-     * 8000 : Member crew 관련
+     * 8000: membersocialring 관련
      */
-    CANNOT_FOUND_MEMBERCREW(8000, HttpStatus.BAD_REQUEST.value(), "멤버_크루를 찾을 수 없습니다."),
-    CANNOT_FOUND_MEMBERCREW_LIST(8001, HttpStatus.BAD_REQUEST.value(), "멤버_크루 리스트를 찾을 수 없습니다."),
-    ALREADY_EXIST(8002, HttpStatus.BAD_REQUEST.value(), "이미 등록된 멤버입니다.");
+    CANNOT_FOUND_MEMBERSOCIALRING(8000, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링을 찾을 수 없습니다."),
+    CANNOT_MEMBERSOCIALRING_CAPTAIN(8001, HttpStatus.BAD_REQUEST.value(), "소셜링 수정,삭제에 접근할수없는 권한입니다."),
+
+    /**
+     * 9000 : crew 관련
+     */
+    CANNOT_FOUND_CREW_LIST(9000, HttpStatus.BAD_REQUEST.value(), "크루 리스트를 찾을 수 없습니다."),
+    CANNOT_FOUND_CREW(9001, HttpStatus.BAD_REQUEST.value(), "크루를 찾을 수 없습니다."),
+    ALREADY_FULL_CREW(9002, HttpStatus.BAD_REQUEST.value(), "더이상 크루에 참여하실 수 없습니다."),
+
+
+    /**
+     * 10000 : Member crew 관련
+     */
+    CANNOT_FOUND_MEMBERCREW(10000, HttpStatus.BAD_REQUEST.value(), "멤버_크루를 찾을 수 없습니다."),
+    CANNOT_FOUND_MEMBERCREW_LIST(10001, HttpStatus.BAD_REQUEST.value(), "멤버_크루 리스트를 찾을 수 없습니다."),
+    ALREADY_EXIST(10002, HttpStatus.BAD_REQUEST.value(), "이미 등록된 멤버입니다.");
+
 
 
     private final int code;

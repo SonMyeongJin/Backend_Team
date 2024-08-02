@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -94,5 +95,23 @@ public class Socialring extends BaseTime {
         this.facility = facility;
         this.exercise = exercise;
         this.status =  baseStatus;
+    }
+
+    public void UpdateSocialringInfo(String newSocialringName, String newSocialringImg, Integer newTotalRecruits, LocalDate newSocialringDate,
+                                     Integer newSocialringCost, String newComment, String newCommentSimple, BaseGender newGender,
+                                     BaseLevel newLevel, ActivityRegion activityRegion, Facility facility,Exercise exercise) {
+        this.socialringName = newSocialringName;
+        this.socialringImg = newSocialringImg;
+        this.totalRecruits = newTotalRecruits;
+        this.socialringDate = newSocialringDate;
+        this.socialringCost = newSocialringCost;
+        this.commentSimple = newCommentSimple;
+        this.comment = newComment;
+        this.gender = newGender;
+        this.level = newLevel;
+        this.activityRegion = activityRegion;
+        this.facility = facility;
+        this.exercise = exercise;
+
     }
 }
