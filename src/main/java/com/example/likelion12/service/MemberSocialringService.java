@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_MEMBERSOCIALRING_CAPTAIN;
+import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.NOT_MEMBERSOCIALRING_CAPTAIN;
 
 @Slf4j
 @Service
@@ -37,7 +37,7 @@ public class MemberSocialringService {
         log.info("[MemberSocialringService.ConfirmCaptainMemberSocialring]");
 
         if (!BaseRole.CAPTAIN.equals(memberSocialring.getRole())) {
-            throw new MemberSocialringException(CANNOT_MEMBERSOCIALRING_CAPTAIN);
+            throw new MemberSocialringException(NOT_MEMBERSOCIALRING_CAPTAIN);
         }
     }
 
