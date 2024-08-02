@@ -1,4 +1,4 @@
-package com.example.likelion12.dto;
+package com.example.likelion12.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

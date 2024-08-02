@@ -1,20 +1,24 @@
 package com.example.likelion12.service;
 
-import com.example.likelion12.common.exception.ActivityRegionException;
-import com.example.likelion12.common.exception.ExerciseException;
-import com.example.likelion12.common.exception.FacilityException;
-import com.example.likelion12.common.exception.MemberException;
+import com.example.likelion12.common.exception.*;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
-import com.example.likelion12.dto.PostCrewRequest;
-import com.example.likelion12.dto.PostCrewResponse;
+import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.PostCrewRequest;
+import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.swing.undo.CannotRedoException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
 
@@ -30,6 +34,7 @@ public class CrewService {
     private final CrewRepository crewRepository;
     private final MemberRepository memberRepository;
     private final MemberCrewService memberCrewService;
+    private final MemberCrewRepository memberCrewRepository;
 
     /**
      * 크루 등록
@@ -68,5 +73,46 @@ public class CrewService {
         //크루를 만든 사람이 CAPTAIN 이 되도록
         memberCrewService.createMemberCrew(member,crew);
         return new PostCrewResponse(crew.getCrewId());
+    }
+
+    /**
+     * 크루 상세 조회
+     */
+    public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
+        log.info("[CrewService.getCrewDetail]");
+
+        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new CrewException(CANNOT_FOUND_MEMBERCREW));
+
+        // 가입한 멤버 리스트 추출
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
+        // 그 멤버 중에서 사진만 추출해서 반환
+        List<GetCrewDetailResponse.Crews> memberImgList = memberCrewList.stream()
+                .map(MemberCrew -> new GetCrewDetailResponse.Crews(memberCrew.getMember().getMemberImg()))
+                .collect(Collectors.toList());
+
+        List<GetCrewDetailResponse.Recommands> recommandsList = crewRepository.findTop3ByExerciseIdAndStatus(
+                crew.getExercise().getExerciseId(),
+                BaseStatus.ACTIVE,
+                Pageable.ofSize(3)
+        ).stream().map(crews -> new GetCrewDetailResponse.Recommands(
+                crews.getCrewId(),
+                crews.getCrewName(),
+                crews.getCrewImg(),
+                crews.getCrewCost(),
+                crews.getActivityRegion().getActivityRegionName(),
+                crews.getExercise().getExerciseName(),
+                crews.getMemberCrewList().size(), // Assuming this returns the current recruits count
+                crews.getTotalRecruits()
+        )).collect(Collectors.toList());
+
+        GetCrewDetailResponse getCrewDetailResponse = new GetCrewDetailResponse(memberCrew.getRole(), crew.getCrewName(),
+                crew.getCrewImg(), crew.getActivityRegion().getActivityRegionName(),crew.getExercise().getExerciseName(),
+                crew.getTotalRecruits(),crew.getCrewCost(),memberImgList,recommandsList);
+
+        return getCrewDetailResponse;
     }
 }

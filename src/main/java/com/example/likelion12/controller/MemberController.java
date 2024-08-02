@@ -1,8 +1,8 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
-import com.example.likelion12.dto.PostSignupRequest;
-import com.example.likelion12.dto.PostSignupResponse;
+import com.example.likelion12.dto.member.PostSignupRequest;
+import com.example.likelion12.dto.member.PostSignupResponse;
 import com.example.likelion12.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
