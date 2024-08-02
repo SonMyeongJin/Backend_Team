@@ -1,17 +1,18 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
-import com.example.likelion12.dto.PostCrewRequest;
-import com.example.likelion12.dto.PostCrewResponse;
+import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.PostCrewRequest;
+import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.*;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/crew")
 public class CrewController {
 
@@ -28,4 +29,16 @@ public class CrewController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(crewService.createCrew(memberId, postCrewRequest));
     }
+
+    /**
+     * 크루 상세 조회
+     */
+    @GetMapping("")
+    public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
+                                                             @RequestParam Long crewId){
+        log.info("[CrewController.getCrewDetail]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewId));
+    }
+
 }

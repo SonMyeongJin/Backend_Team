@@ -4,7 +4,6 @@ import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.dto.HomeResponse;
 import com.example.likelion12.service.HomeService;
 import com.example.likelion12.util.*;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

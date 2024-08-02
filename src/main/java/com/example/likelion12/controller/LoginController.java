@@ -1,12 +1,11 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
-import com.example.likelion12.dto.LoginResponse;
+import com.example.likelion12.dto.member.LoginResponse;
 import com.example.likelion12.service.LoginService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
