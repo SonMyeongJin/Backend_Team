@@ -1,5 +1,6 @@
 package com.example.likelion12.service;
 
+import com.example.likelion12.common.exception.FacilityException;
 import com.example.likelion12.common.exception.MemberException;
 import com.example.likelion12.common.exception.ReviewException;
 import com.example.likelion12.domain.Facility;
@@ -13,8 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_MEMBER;
-import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_REVIEW;
+import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
 
 @Service
 public class ReviewService {
@@ -36,7 +36,7 @@ public class ReviewService {
 
         // facilityId로 facility 찾고
         Facility facility = facilityRepository.findById(facilityId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid facility ID"));
+                .orElseThrow(() -> new FacilityException(CANOOT_FOUND_FACILITY));
 
         //리뷰에 받아온 값들 넣고
         Review review = new Review();
