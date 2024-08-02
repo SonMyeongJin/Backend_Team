@@ -56,4 +56,14 @@ public class SocialringController {
         return new BaseResponse<>(socialringService.getSocialringDetail(memberId, socialringId));
     }
 
+    /**
+     * 소셜링 참여하기
+     */
+    @PostMapping("/join")
+    public BaseResponse<Void> joinSocialring(@RequestHeader("Authorization") String authorization,@RequestParam Long socialringId){
+        log.info("[SocialringController.joinSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        socialringService.joinSocialring(memberId, socialringId);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
+    }
 }

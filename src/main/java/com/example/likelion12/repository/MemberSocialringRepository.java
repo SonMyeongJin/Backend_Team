@@ -11,6 +11,7 @@ public interface MemberSocialringRepository extends JpaRepository<MemberSocialri
 
     Optional<MemberSocialring> findByMember_MemberIdAndSocialring_SocialringIdAndStatus(Long memberId, Long socialringId, BaseStatus status);
     Optional<List<MemberSocialring>> findBySocialring_SocialringIdAndStatus(Long socialringId, BaseStatus baseStatus);
+    boolean existsByMember_MemberIdAndSocialring_SocialringIdAndStatus(Long memberId, Long socialringId, BaseStatus status);
 }
 
 
