@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.Optional;
+
 public interface SocialringRepository extends JpaRepository<Socialring, Long> {
 
     // 홈화면에 보여줄 4개를 마감기한 입박한 순으로 반환
