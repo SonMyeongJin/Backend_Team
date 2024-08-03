@@ -66,4 +66,17 @@ public class SocialringController {
         socialringService.joinSocialring(memberId, socialringId);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
+
+    /**
+     * 소셜링 취소하기
+     */
+    @PatchMapping("/cancel")
+    public BaseResponse<Void> cancelSocialring(@RequestHeader("Authorization") String authorization,
+                                               @RequestParam Long socialringId) {
+        log.info("[SocialringController.cancelSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        socialringService.cancelSocialring(memberId, socialringId);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
+    }
+
 }
