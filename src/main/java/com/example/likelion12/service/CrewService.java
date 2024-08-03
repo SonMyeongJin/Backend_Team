@@ -178,10 +178,13 @@ public class CrewService {
                 .orElseThrow(()->new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
 
         // 멤버 크루리스트 삭제
-        memberCrewList.forEach(mc -> memberCrewRepository.delete(mc));
-
+        for(MemberCrew membercrew: memberCrewList) {
+            membercrew.DeleteMemberCrewInfo(BaseStatus.DELETE);
+            memberCrewRepository.save(membercrew);
+        }
         //크루 삭제
-        crewRepository.delete(crew);
+        crew.DeleteCrewInfo(BaseStatus.DELETE);
+        crewRepository.save(crew);
     }
 
     /**
