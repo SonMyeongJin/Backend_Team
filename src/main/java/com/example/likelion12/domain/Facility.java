@@ -32,10 +32,8 @@ public class Facility extends BaseTime {
     @Column(nullable = false)
     private String facilityCity; // 시 정보
 
-    @Column(nullable = false)
     private String facilityGu; // 구 정보
 
-    @Column(nullable = false)
     private String facilityDong; // 동 정보
 
     private String facilityPhone;
