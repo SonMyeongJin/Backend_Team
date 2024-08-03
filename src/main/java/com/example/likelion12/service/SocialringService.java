@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
+import static com.example.likelion12.domain.base.BaseStatus.DELETE;
 
 @Slf4j
 @Service
@@ -227,5 +228,33 @@ public class SocialringService {
             // 같으면 전원 모집인 경우라서 가입 불가능
             throw new SocialringException(ALREADY_FULL_SOCIALRING);
         }
+    }
+
+    /**
+     * 소셜링 삭제하기
+     */
+    @Transactional
+    public void deleteSocialring(Long memberId, Long socialringId) {
+        log.info("[SocialringService.deleteSocialring]");
+
+        // 소셜링을 삭제하고자 하는 멤버를 찾기
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+
+        // 삭제하고자 하는 소셜링이 존재하는지 확인
+        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
+
+        // 소셜링을 삭제하고자 하는 멤버의 멤버소셜링을 찾기
+        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId, socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+
+        // 접근 멤버가 CAPTAIN인지 유효성 검사
+        memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);
+
+        // 소셜링 상태를 DELETE로 변경
+        socialring.setStatus(DELETE);
+        socialringRepository.save(socialring);
+
     }
 }
