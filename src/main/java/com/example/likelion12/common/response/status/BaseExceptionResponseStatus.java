@@ -61,7 +61,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
      */
     CANNOT_FOUND_MEMBERCREW(10000, HttpStatus.BAD_REQUEST.value(), "멤버_크루를 찾을 수 없습니다."),
     CANNOT_FOUND_MEMBERCREW_LIST(10001, HttpStatus.BAD_REQUEST.value(), "멤버_크루 리스트를 찾을 수 없습니다."),
-    ALREADY_EXIST_IN_CREW(10002, HttpStatus.BAD_REQUEST.value(), "해당 크루에 이미 등록된 멤버입니다.");
+    ALREADY_EXIST_IN_CREW(10002, HttpStatus.BAD_REQUEST.value(), "해당 크루에 이미 등록된 멤버입니다."),
 
     /**
      * 11000 : Review 관련

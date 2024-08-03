@@ -16,7 +16,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 기본적으로 JpaRepository의 save() 메서드를 사용하여 작성할 수 있습니다.
     // 예: reviewRepository.save(review);
 
-    // 리뷰 삭제 -> 스프링에서 자동으로 구현해줌
+    // 리뷰 수정
+    // 기본적으로 JpaRepository의 save() 메서드를 사용하여 수정할 수 있습니다.
+    // 예: reviewRepository.save(updatedReview);
+
+    // 리뷰 삭제
     void deleteById(Long reviewId);
 
     // 리뷰 수정 -> 기본적인 CRUD외에는 내가 직접 구현해야함 -> 쿼리로 수정하는 방식 선택
