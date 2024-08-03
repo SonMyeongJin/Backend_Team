@@ -37,13 +37,16 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
      * 7000: socialring 관련
      */
     CANNOT_FOUND_SOCIALRING(7000, HttpStatus.BAD_REQUEST.value(), "소셜링을 찾을 수 없습니다."),
+    ALREADY_FULL_SOCIALRING(7001, HttpStatus.BAD_REQUEST.value(), "더이상 소셜링에 참여 할 수 없습니다."),
 
 
     /**
-     * 8000: membersocialring 관련
+     * 8000: member socialring 관련
      */
     CANNOT_FOUND_MEMBERSOCIALRING(8000, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링을 찾을 수 없습니다."),
     CANNOT_MEMBERSOCIALRING_CAPTAIN(8001, HttpStatus.BAD_REQUEST.value(), "소셜링 수정,삭제에 접근할수없는 권한입니다."),
+    CANNOT_FOUND_MEMBERSOCIALRING_LIST(8002, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링 리스트를 찾을 수 없습니다."),
+    ALREADY_EXIST_IN_SOCIALRING(8003, HttpStatus.BAD_REQUEST.value(), "해당 소셜링에 이미 등록된 멤버입니다."),
 
     /**
      * 9000 : crew 관련
@@ -58,15 +61,14 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
      */
     CANNOT_FOUND_MEMBERCREW(10000, HttpStatus.BAD_REQUEST.value(), "멤버_크루를 찾을 수 없습니다."),
     CANNOT_FOUND_MEMBERCREW_LIST(10001, HttpStatus.BAD_REQUEST.value(), "멤버_크루 리스트를 찾을 수 없습니다."),
-    ALREADY_EXIST(10002, HttpStatus.BAD_REQUEST.value(), "이미 등록된 멤버입니다."),
+    ALREADY_EXIST_IN_CREW(10002, HttpStatus.BAD_REQUEST.value(), "해당 크루에 이미 등록된 멤버입니다."),
 
     /**
      * 11000 : Review 관련
      */
     CANNOT_FOUND_REVIEW(11000, HttpStatus.BAD_REQUEST.value(), "리뷰를 찾을 수 없습니다."),
-    ALREADY_EXIST_REVIEW(11001, HttpStatus.BAD_REQUEST.value(), "이미 등록한 리뷰가 있습니다. 수정으로 작성해주세요"),
+    ALREADY_EXIST_REVIEW(11001, HttpStatus.BAD_REQUEST.value(), "이미 등록한 리뷰가 있습니다. 수정으로 작성해주세요."),
     CANNOT_SET_SCORE(11002, HttpStatus.BAD_REQUEST.value(), "점수가 너무 높거나 낮습니다. 1~5점으로 평가해주세요"); // 추가된 상수
-
 
 
     private final int code;
