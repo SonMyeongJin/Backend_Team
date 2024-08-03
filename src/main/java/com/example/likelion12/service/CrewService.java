@@ -158,7 +158,7 @@ public class CrewService {
 
         //크루 아이디로 참여하려는 크루 찾기
         if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crewId, BaseStatus.ACTIVE)){
-            throw new MemberCrewException(ALREADY_EXIST);
+            throw new MemberCrewException(ALREADY_EXIST_IN_CREW);
         }
         Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
