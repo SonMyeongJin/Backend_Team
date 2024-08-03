@@ -56,7 +56,35 @@ public class Review extends BaseTime {
         this.member = member;
     }
 
+    public void updateReview(Facility facility , int ranking, String comment )
+    {
+        this.facility = facility;
+        this.ranking = ranking;
+        this.comment = comment;
+    }
+
     public void setStatus(BaseStatus status) {
         this.status = status;
+    }
+
+    public void setRanking(Integer ranking) {
+        if (ranking != null) {
+            // 랭킹이 1~5 범위에 있어야 함
+            if (ranking < 1 || ranking > 5) {
+                throw new ReviewException(CANNOT_SET_SCORE);
+            }
+            this.ranking = ranking;
+        }
+        // ranking이 null인 경우, 기존 값을 그대로 유지합니다.
+    }
+
+    // 코멘트 설정 메서드
+    public void setComment(String comment) {
+        this.comment = comment != null ? comment : this.comment; // 기존 값 유지
+    }
+
+    // 시설 설정 메서드
+    public void setFacility(Facility facility) {
+        this.facility = facility != null ? facility : this.facility; // 기존 값 유지
     }
 }

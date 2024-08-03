@@ -46,9 +46,20 @@ public class ReviewController {
                 // 삭제 실패 시 응답 생성
             return new BaseResponse<>("리뷰가 삭제되지 않았습니다");
         }
-
-
-
     }
 
+    @PatchMapping
+    public BaseResponse<String> updateReview(@RequestHeader("Authorization") String authorization,
+                                             @RequestParam("review-id") Long reviewId,
+                                             @RequestBody PostReviewRequest postReviewRequest) {
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+
+        reviewService.updateReview(reviewId,
+                postReviewRequest.getFacilityId(),
+                postReviewRequest.getRanking(),
+                postReviewRequest.getComment(),
+                memberId);
+
+        return new BaseResponse<>("리뷰가 성공적으로 업데이트되었습니다");
+    }
 }
