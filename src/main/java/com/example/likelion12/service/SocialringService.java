@@ -5,16 +5,20 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
+import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
 import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
 import com.example.likelion12.dto.socialring.PostSocialringRequest;
 import com.example.likelion12.dto.socialring.PostSocialringResponse;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
 
@@ -30,7 +34,9 @@ public class SocialringService {
     private final ActivityRegionRepository activityRegionRepository;
     private final MemberSocialringRepository memberSocialringRepository;
 
-    //소셜링등록
+    /**
+     * 소셜링 등록
+     */
     @Transactional
     public PostSocialringResponse createSocialring(Long memberId, PostSocialringRequest postSocialringRequest) {
         log.info("[SocialringService.createSocialring]");
@@ -66,7 +72,9 @@ public class SocialringService {
         return new PostSocialringResponse(socialring.getSocialringId());
     }
 
-    //소셜링 수정
+    /**
+     * 소셜링 수정
+     */
     @Transactional
     public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) {
         log.info("[SocialringService.modifySocialring]");
@@ -138,6 +146,86 @@ public class SocialringService {
 
     }
 
+    /**
+     * 소셜링 상세 조회
+     */
+    @Transactional
+    public GetSocialringDetailResponse getSocialringDetail(Long memberId, Long socialringId) {
+        log.info("[SocialringService.getSocialringDetail]");
 
+        // 상세조회하고자 하는 소셜링
+        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
+        // 상세조회하고자 하는 멤버의 멤버소셜링
+        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
+                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+        // 소셜링에 등록된 멤버 리스트 추출
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
+                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+        // 소셜링에 등록된 멤버 리스트에서 사진만 추출해서 반환
+        List<GetSocialringDetailResponse.Socialrings> memberImgList = memberSocialringList.stream()
+                .map(MemberSocialring -> new GetSocialringDetailResponse.Socialrings(memberSocialring.getMember().getMemberImg()))
+                .collect(Collectors.toList());
+
+        List<GetSocialringDetailResponse.Recommands> recommandsList = socialringRepository.findTop3ByActivityRegionIdAndStatus(
+                socialring.getActivityRegion().getActivityRegionId(), BaseStatus.ACTIVE, Pageable.ofSize(3))
+                .stream().map(socialrings -> new GetSocialringDetailResponse.Recommands(
+                socialrings.getSocialringId(),
+                socialrings.getSocialringName(),
+                socialrings.getSocialringImg(),
+                socialrings.getActivityRegion().getActivityRegionName(),
+                socialrings.getSocialringDate(),
+                socialrings.getSocialringCost(),
+                socialrings.getCommentSimple(),
+                socialrings.getMemberSocialringList().size(),
+                socialrings.getTotalRecruits()
+        )).collect(Collectors.toList());
+
+        GetSocialringDetailResponse getSocialringDetailResponse = new GetSocialringDetailResponse(memberSocialring.getRole(),socialring.getSocialringName(),
+                socialring.getSocialringImg(), socialring.getActivityRegion().getActivityRegionName(),socialring.getFacility().getFacilityName(),
+                socialring.getExercise().getExerciseName(),socialring.getTotalRecruits(),socialring.getSocialringDate(),
+                socialring.getSocialringCost(),socialring.getComment(),socialring.getCommentSimple(),socialring.getGender(),
+                socialring.getLevel(),memberImgList,recommandsList);
+
+        return getSocialringDetailResponse;
+
+    }
+
+    /**
+     * 소셜링 참여하기
+     */
+    @Transactional
+    public void joinSocialring(Long memberId, Long socialringId) {
+        log.info("[SocialringService.joinSocialring]");
+
+        //소셜링을 참여하고자 하는 멤버
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+
+        //참여하고자 하는 소셜링
+        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
+
+        //해당 소셜링에 이미 등록되어있다면 예외처리
+        if(memberSocialringRepository.existsByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,socialringId,BaseStatus.ACTIVE)){
+            throw new MemberSocialringException(ALREADY_EXIST_IN_SOCIALRING);
+        }
+
+        // 참여하려는 소셜링의 총 모집 인원 확인하기
+        int totalRecruits = socialring.getTotalRecruits();
+
+        // 현재 참여중인 소셜링원 수 확인하기
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialringId,BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+        int currentSocialrings = memberSocialringList.size();
+
+        if(totalRecruits > currentSocialrings){
+            // 모집인원이 현재인원보다 많으니까 가입 가능
+            memberSocialringService.joinMemberSocialring(member,socialring); // BaseRole.CREW로 멤버소셜링에 저장
+        }else{
+            // 같으면 전원 모집인 경우라서 가입 불가능
+            throw new SocialringException(ALREADY_FULL_SOCIALRING);
+        }
+    }
 }
