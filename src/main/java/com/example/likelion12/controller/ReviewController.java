@@ -62,5 +62,4 @@ public class ReviewController {
 
         return new BaseResponse<>("리뷰가 성공적으로 업데이트되었습니다");
     }
-
 }
