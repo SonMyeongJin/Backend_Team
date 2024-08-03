@@ -44,4 +44,5 @@ public class MemberController {
         memberService.logout(memberId);
         return new BaseResponse<>(null);
     }
+
 }
