@@ -6,6 +6,7 @@ import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.repository.*;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,6 +77,35 @@ public class CrewService {
     }
 
     /**
+     * 크루  조회
+     */
+    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, List<Long> crewIds) {
+        log.info("[CrewService.getCrewInquiries]");
+
+        List<GetCrewInquiryResponse> getCrewInquiryResponses = new ArrayList<>();
+
+        for (Long crewId : crewIds) {
+
+            //조회하고자 하는 크루
+            Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+                    .orElseThrow(() -> new CrewException(CANNOT_FOUND_CREW));
+
+            GetCrewInquiryResponse response = new GetCrewInquiryResponse(
+                    crew.getCrewName(),
+                    crew.getCrewImg(),
+                    crew.getActivityRegion().getActivityRegionName(),
+                    crew.getExercise().getExerciseName(),
+                    crew.getLevel(),
+                    crew.getCommentSimple()
+            );
+
+            getCrewInquiryResponses.add(response);
+        }
+
+        return getCrewInquiryResponses;
+    }
+
+    /**
      * 크루 상세 조회
      */
     public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
@@ -126,7 +158,7 @@ public class CrewService {
 
         //크루 아이디로 참여하려는 크루 찾기
         if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crewId, BaseStatus.ACTIVE)){
-            throw new MemberCrewException(ALREADY_EXIST_IN_CREW);
+            throw new MemberCrewException(ALREADY_EXIST);
         }
         Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
@@ -147,4 +179,5 @@ public class CrewService {
             throw new CrewException(ALREADY_FULL_CREW);
         }
     }
+
 }
