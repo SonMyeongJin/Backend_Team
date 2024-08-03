@@ -30,13 +30,15 @@ public class Facility extends BaseTime {
     private String facilityName;
 
     @Column(nullable = false)
-    private String facilityAddress;
+    private String facilityCity; // 시 정보
+
+    @Column(nullable = false)
+    private String facilityGu; // 구 정보
+
+    @Column(nullable = false)
+    private String facilityDong; // 동 정보
 
     private String facilityPhone;
-    private String facilitySize;
-    private String administer;
-    private LocalDateTime weekday;
-    private LocalDateTime weekend;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
