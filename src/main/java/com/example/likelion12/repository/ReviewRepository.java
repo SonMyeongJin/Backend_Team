@@ -1,5 +1,7 @@
 package com.example.likelion12.repository;
 
+import com.example.likelion12.domain.Facility;
+import com.example.likelion12.domain.Member;
 import com.example.likelion12.domain.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -17,4 +19,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // 리뷰 삭제
     void deleteById(Long reviewId);
+
+    // 중복 검사
+    boolean existsByMemberAndFacility(Member member, Facility facility);
 }
