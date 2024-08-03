@@ -5,10 +5,7 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
-import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
-import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
-import com.example.likelion12.dto.socialring.PostSocialringRequest;
-import com.example.likelion12.dto.socialring.PostSocialringResponse;
+import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -227,5 +225,93 @@ public class SocialringService {
             // 같으면 전원 모집인 경우라서 가입 불가능
             throw new SocialringException(ALREADY_FULL_SOCIALRING);
         }
+    }
+
+    /**
+     * 소셜링 검색결과 필터링
+     */
+    @Transactional
+    public List<GetSocialringSearchFilterResponse> searchFilterSocialring
+            (Long memberId, GetSocialringSearchFilterRequest getSocialringSearchFilterRequest) {
+        log.info("[SocialringService.searchFilterSocialring]");
+
+        // 전체 소셜링 목록 조회
+        List<Socialring> allSocialrings = socialringRepository.findAllByStatus(BaseStatus.ACTIVE);
+        List<GetSocialringSearchFilterResponse> responseList = new ArrayList<>();
+
+        // 요청값의 범위 확인 후 필터링
+        for (Socialring socialring : allSocialrings) {
+            boolean matchesCriteria = true;
+
+            if (getSocialringSearchFilterRequest.getExerciseName() != null) {
+                if (!socialring.getExercise().getExerciseName().equals(getSocialringSearchFilterRequest.getExerciseName())) {
+                    matchesCriteria = false;
+                }
+            }
+            if (matchesCriteria && getSocialringSearchFilterRequest.getGender() != null) {
+                if (!socialring.getGender().equals(getSocialringSearchFilterRequest.getGender())) {
+                    matchesCriteria = false;
+                }
+            }
+            if (matchesCriteria && getSocialringSearchFilterRequest.getLevel() != null) {
+                if (!socialring.getLevel().equals(getSocialringSearchFilterRequest.getLevel())) {
+                    matchesCriteria = false;
+                }
+            }
+
+            // 최소, 최대 범위가 둘 다 들어왔을 때
+            if (matchesCriteria && getSocialringSearchFilterRequest.getSocialringCostMin() != null && getSocialringSearchFilterRequest.getSocialringCostMax() != null) {
+                if (!(socialring.getSocialringCost() >= getSocialringSearchFilterRequest.getSocialringCostMin()
+                        && socialring.getSocialringCost() <= getSocialringSearchFilterRequest.getSocialringCostMax())) {
+                    matchesCriteria = false;
+                }
+            }
+            // 최소 범위만 들어왔을 때
+            else if (matchesCriteria && getSocialringSearchFilterRequest.getSocialringCostMin() != null) {
+                if (socialring.getSocialringCost() < getSocialringSearchFilterRequest.getSocialringCostMin()) {
+                    matchesCriteria = false;
+                }
+            }
+            // 최대 범위만 들어왔을 때
+            else if (matchesCriteria && getSocialringSearchFilterRequest.getSocialringCostMax() != null) {
+                if (socialring.getSocialringCost() > getSocialringSearchFilterRequest.getSocialringCostMax()) {
+                    matchesCriteria = false;
+                }
+            }
+
+            // 최소, 최대 모집 인원 범위가 둘 다 들어왔을 때
+            if (matchesCriteria && getSocialringSearchFilterRequest.getTotalRecruitsMin() != null && getSocialringSearchFilterRequest.getTotalRecruitsMax() != null) {
+                if (!(socialring.getTotalRecruits() >= getSocialringSearchFilterRequest.getTotalRecruitsMin()
+                        && socialring.getTotalRecruits() <= getSocialringSearchFilterRequest.getTotalRecruitsMax())) {
+                    matchesCriteria = false;
+                }
+            }
+            // 최소 모집 인원만 들어왔을 때
+            else if (matchesCriteria && getSocialringSearchFilterRequest.getTotalRecruitsMin() != null) {
+                if (socialring.getTotalRecruits() < getSocialringSearchFilterRequest.getTotalRecruitsMin()) {
+                    matchesCriteria = false;
+                }
+            }
+            // 최대 모집 인원만 들어왔을 때
+            else if (matchesCriteria && getSocialringSearchFilterRequest.getTotalRecruitsMax() != null) {
+                if (socialring.getTotalRecruits() > getSocialringSearchFilterRequest.getTotalRecruitsMax()) {
+                    matchesCriteria = false;
+                }
+            }
+
+            // 조건에 맞으면 응답 리스트에 추가
+            if (matchesCriteria) {
+                GetSocialringSearchFilterResponse response =
+                        new GetSocialringSearchFilterResponse(socialring.getSocialringId());
+                responseList.add(response);
+            }
+        }
+
+        // 해당하는 소셜링 리스트가 하나도 없을 때 예외 처리
+        if (responseList.isEmpty()) {
+            throw new SocialringException(CANNOT_FOUND_SOCIALRING);
+        }
+
+        return responseList;
     }
 }
