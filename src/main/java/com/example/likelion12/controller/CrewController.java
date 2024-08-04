@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -82,9 +84,10 @@ public class CrewController {
      * 참여중인 크루 조회
      */
     @GetMapping("/join")
-    public BaseResponse<GetJoinCrewResponse> getJoinCrew(@RequestHeader("Authorization") String authorization){
+    public BaseResponse<List<GetJoinCrewResponse>> getJoinCrew(@RequestHeader("Authorization") String authorization) {
         log.info("[CrewController.getJoinCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getJoinCrew(memberId));
+        List<GetJoinCrewResponse> joinCrewResponses = crewService.getJoinCrew(memberId);
+        return new BaseResponse<>(joinCrewResponses);
     }
 }

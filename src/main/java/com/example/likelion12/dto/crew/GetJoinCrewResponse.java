@@ -14,5 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class GetJoinCrewResponse {
 
-    private List<MemberCrew> memberCrewList;
+    private String crewName;
+    private String crewImg;
+    private String commentSimple;
 }
