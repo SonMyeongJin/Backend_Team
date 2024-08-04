@@ -49,6 +49,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     ALREADY_EXIST_IN_SOCIALRING(8003, HttpStatus.BAD_REQUEST.value(), "해당 소셜링에 이미 등록된 멤버입니다."),
     N0T_EXIST_JOIN_SOCIALRING(8004, HttpStatus.BAD_REQUEST.value(), "참가 중인 소셜링이 존재하지 않습니다."),
     N0T_EXIST_JOIN_BEFORE_SOCIALRING(8005, HttpStatus.BAD_REQUEST.value(), "참가 예정인 소셜링이 존재 하지않습니다."),
+    N0T_EXIST_JOIN_COMPLETE_SOCIALRING(8005, HttpStatus.BAD_REQUEST.value(), "참가 완료한 소셜링이 존재 하지않습니다."),
 
     /**
      * 9000 : crew 관련
