@@ -256,5 +256,14 @@ public class SocialringService {
         socialring.setStatus(DELETE);
         socialringRepository.save(socialring);
 
+        // 소설링이 참조하고 있는 멤버 소셜링의 상태를 전부 DELETE로 변경
+            // 소셜링에 등록된 멤버 리스트 추출
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
+                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+            // 해당 리스트의 멤버의 상태를 DELETE로 변경
+        for (MemberSocialring memberSocialringEntry : memberSocialringList) {
+            memberSocialringEntry.setStatus(DELETE);
+            memberSocialringRepository.save(memberSocialringEntry);
+        }
     }
 }
