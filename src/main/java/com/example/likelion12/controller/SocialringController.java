@@ -70,10 +70,11 @@ public class SocialringController {
      * 참가 예정인 소셜링
      */
     @GetMapping("/join/before")
-    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinBeforeSocialring(@RequestHeader("Authorization") String authorization){
+    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinBeforeSocialring(@RequestHeader("Authorization") String authorization) {
         log.info("[SocialringController.joinBeforeSocialring]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(socialringService.joinBeforeSocialring(memberId));
+    }
    /**
      * 소셜링 삭제하기
      */
