@@ -81,7 +81,7 @@ public class CrewController {
     /**
      * 참여중인 크루 조회
      */
-    @GetMapping("")
+    @GetMapping("/join")
     public BaseResponse<GetJoinCrewResponse> getJoinCrew(@RequestHeader("Authorization") String authorization){
         log.info("[CrewController.getJoinCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
