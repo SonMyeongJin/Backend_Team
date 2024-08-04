@@ -1,11 +1,13 @@
 package com.example.likelion12.service;
 
 import com.example.likelion12.common.exception.*;
+import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.GetJoinCrewResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.repository.*;
@@ -211,5 +213,26 @@ public class CrewService {
         else //크루 탈퇴
         memberCrewRepository.delete(memberCrew);
 
+    }
+
+    /**
+     * 참여중인 크루 조회하기
+     */
+    @Transactional
+    public GetJoinCrewResponse getJoinCrew(Long memberId) {
+        log.info("[CrewService.getJoinCrew]");
+        
+        // 멤버Id로 멤버찾고
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+        
+        // 멤버가 가지고 있는 crew를 리스트로 가져오고
+        List<MemberCrew> memberCrewList = member.getMemberCrewList();
+
+        // 가져온 리스트를 Response Dto 에 담아서
+        GetJoinCrewResponse getJoinCrewResponse = new GetJoinCrewResponse(memberCrewList);
+
+        // 반환하기
+        return getJoinCrewResponse;
     }
 }
