@@ -91,4 +91,8 @@ public class Crew extends BaseTime {
         this.exercise = exercise;
         this.status = status;
     }
+
+    public void DeleteCrewInfo(BaseStatus status) {
+        this.status= status;
+    }
 }

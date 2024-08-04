@@ -75,5 +75,28 @@ public class CrewController {
         return new BaseResponse<>(crewService.searchFilterCrew(memberId, getCrewSearchFilterRequest));
     }
 
+    /**
+     * 크루 삭제하기
+     */
+    @PatchMapping("/delete")
+    public BaseResponse<Void> deleteCrew(@RequestHeader("Authorization") String authorization,
+                                         @RequestParam Long crewId){
+        log.info("[CrewController.deleteCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        crewService.deleteCrew(memberId,crewId);
+        return new BaseResponse<>(null);
+    }
+
+    /**
+     * 크루 탈퇴하기
+     */
+    @PatchMapping("/cancel")
+    public BaseResponse<Void> cancelCrew(@RequestHeader("Authorization") String authorization,
+                                         @RequestParam Long crewId){
+        log.info("[CrewController.deleteCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        crewService.cancelCrew(memberId,crewId);
+        return new BaseResponse<>(null);
+    }
 
 }
