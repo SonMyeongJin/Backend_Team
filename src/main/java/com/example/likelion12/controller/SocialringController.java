@@ -2,10 +2,7 @@ package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
-import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
-import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
-import com.example.likelion12.dto.socialring.PostSocialringRequest;
-import com.example.likelion12.dto.socialring.PostSocialringResponse;
+import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.service.SocialringService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
