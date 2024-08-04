@@ -4,6 +4,7 @@ import com.example.likelion12.common.exception.*;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
+import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
 import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
@@ -244,10 +245,19 @@ public class SocialringService {
         Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
-        // 해당 소셜링에 등록된 멤버 소셜링 중, 취소할 멤버의 소셜링 상태를 'delete'로 변경
+        // 해당 소셜링에 등록된 멤버 소셜링 중, 취소할 멤버의 멤버소셜링 값을 가져와서
         MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
                 socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
 
+        // 가져온 멤버 소셜링의 값으로 캡틴인지 확인하고
+        memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);
+
+        // 캡틴인 경우 예외 발생
+        if (memberSocialring.getRole() == BaseRole.CAPTAIN) {
+            throw new MemberSocialringException(CANNOT_CANCEL_BY_CAPTAIN);
+        }
+
+        // 캡틴이 아닌경우 정상적으로 상태를 DELETE로 변경
         memberSocialring.setStatusToDelete();
         memberSocialringRepository.save(memberSocialring);
     }
