@@ -77,4 +77,13 @@ public class CrewController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 참여중인 크루 조회
+     */
+    @GetMapping("")
+    public BaseResponse<GetCrewDetailResponse> getJoinCrew(@RequestHeader("Authorization") String authorization){
+        log.info("[CrewController.getJoinCrewDetail]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(crewService.getJoinCrewDetail(memberId));
+    }
 }
