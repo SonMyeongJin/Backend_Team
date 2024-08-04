@@ -5,7 +5,10 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
-import com.example.likelion12.dto.socialring.*;
+import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
+import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
+import com.example.likelion12.dto.socialring.PostSocialringRequest;
+import com.example.likelion12.dto.socialring.PostSocialringResponse;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -367,6 +370,5 @@ public class SocialringService {
             memberSocialringEntry.setStatus(DELETE);
             memberSocialringRepository.save(memberSocialringEntry);
         }
-
     }
 }
