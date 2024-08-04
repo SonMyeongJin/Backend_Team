@@ -243,10 +243,17 @@ public class CrewService {
                 }
             }
 
+            // 현재 참여중인 크루원 수 확인하기
+            int currentCrews = memberCrewRepository.findByCrew_CrewIdAndStatus(crew.getCrewId(), BaseStatus.ACTIVE)
+                    .orElseThrow(()->new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST)).size();
+
             // 조건에 맞으면 응답 리스트에 추가
             if (matchesCriteria) {
                 GetCrewSearchFilterResponse response =
-                        new GetCrewSearchFilterResponse(crew.getCrewId());
+                        new GetCrewSearchFilterResponse(crew.getCrewId(),crew.getCrewName(),
+                                crew.getCrewImg(),crew.getCrewCost(),crew.getActivityRegion().getActivityRegionName(),
+                                crew.getExercise().getExerciseName(),currentCrews,crew.getTotalRecruits(),
+                                crew.getCommentSimple());
                 responseList.add(response);
             }
         }
