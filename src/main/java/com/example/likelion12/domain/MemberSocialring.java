@@ -45,4 +45,8 @@ public class MemberSocialring extends BaseTime {
         this.member = member;
         this.status = baseStatus;
     }
+
+    public void setStatus(BaseStatus status) {
+        this.status = status;
+    }
 }

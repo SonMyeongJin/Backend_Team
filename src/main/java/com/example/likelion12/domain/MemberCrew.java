@@ -45,4 +45,8 @@ public class MemberCrew extends BaseTime {
         this.member = member;
         this.status = status;
     }
+
+    public void DeleteMemberCrewInfo(BaseStatus status) {
+        this.status= status;
+    }
 }

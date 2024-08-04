@@ -77,4 +77,16 @@ public class SocialringController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(socialringService.searchFilterSocialring(memberId, getSocialringSearchFilterRequest));
     }
+  
+     /** 
+     * 소셜링 삭제하기
+     */
+    @PatchMapping("/delete")
+    public BaseResponse<Void> deleteSocialring(@RequestHeader("Authorization") String authorization,
+                                               @RequestParam("socialringId") Long socialringId) {
+        log.info("[SocialringController.deleteSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        socialringService.deleteSocialring(memberId, socialringId);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
+    }
 }
