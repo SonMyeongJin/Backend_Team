@@ -2,15 +2,14 @@ package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
-import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
-import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
-import com.example.likelion12.dto.socialring.PostSocialringRequest;
-import com.example.likelion12.dto.socialring.PostSocialringResponse;
+import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.service.SocialringService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -65,5 +64,15 @@ public class SocialringController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         socialringService.joinSocialring(memberId, socialringId);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
+    }
+
+    /**
+     * 참가 예정인 소셜링
+     */
+    @GetMapping("/join/before")
+    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinBeforeSocialring(@RequestHeader("Authorization") String authorization){
+        log.info("[SocialringController.joinBeforeSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(socialringService.joinBeforeSocialring(memberId));
     }
 }
