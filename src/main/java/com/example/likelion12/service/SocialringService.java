@@ -5,7 +5,10 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
-import com.example.likelion12.dto.socialring.*;
+import com.example.likelion12.dto.socialring.GetSocialringDetailResponse;
+import com.example.likelion12.dto.socialring.PatchSocialringModifyRequest;
+import com.example.likelion12.dto.socialring.PostSocialringRequest;
+import com.example.likelion12.dto.socialring.PostSocialringResponse;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -242,36 +245,89 @@ public class SocialringService {
         LocalDate nowDate = LocalDate.now();
 
         // 멤버의 멤버소셜링리스트 추출
-        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findByMember_MemberIdAndAndStatus(memberId, BaseStatus.ACTIVE)
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findByMember_MemberIdAndAndStatus(memberId,BaseStatus.ACTIVE)
                 .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
 
         // 참가중인 소셜링이 없을때 예외처리
-        if (memberSocialringList.isEmpty())
+        if(memberSocialringList.isEmpty())
             throw new MemberSocialringException(N0T_EXIST_JOIN_SOCIALRING);
 
         // 멤버가 참여한 멤버소셜링 리스트 중에서 현재 날짜보다 더 나중인 소셜링을 추출
         List<Socialring> memberInjoinBeforeSocialrings = new ArrayList<>();
-        for (MemberSocialring memberSocialring : memberSocialringList) {
+        for(MemberSocialring memberSocialring : memberSocialringList ){
             LocalDate socialringDate = memberSocialring.getSocialring().getSocialringDate();
-            if (socialringDate.isAfter(nowDate)) {
+            if(socialringDate.isAfter(nowDate)){
                 memberInjoinBeforeSocialrings.add(memberSocialring.getSocialring());
             }
         }
 
         //참가 예정인 소셜링이 존재하지않을떄 예외처리
-        if (memberInjoinBeforeSocialrings.isEmpty())
+        if(memberInjoinBeforeSocialrings.isEmpty())
             throw new MemberSocialringException(N0T_EXIST_JOIN_BEFORE_SOCIALRING);
 
         List<GetSocialringJoinStatusResponse> responseList = new ArrayList<>();
-        for (Socialring socialring : memberInjoinBeforeSocialrings) {
+        for(Socialring socialring : memberInjoinBeforeSocialrings ){
 
             // 현재 참여중인 소셜링원 수 확인하기
-            int currentSocialrings = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(), BaseStatus.ACTIVE)
-                    .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
+            int currentSocialrings  = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
+                    .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
 
             GetSocialringJoinStatusResponse response = new GetSocialringJoinStatusResponse(socialring.getSocialringId(),
-                    socialring.getSocialringName(), socialring.getSocialringImg(), socialring.getActivityRegion().getActivityRegionName(),
-                    socialring.getSocialringDate(), socialring.getSocialringCost(), socialring.getCommentSimple(), currentSocialrings,
+                    socialring.getSocialringName(),socialring.getSocialringImg(),socialring.getActivityRegion().getActivityRegionName(),
+                    socialring.getSocialringDate(),socialring.getSocialringCost(),socialring.getCommentSimple(),currentSocialrings,
+                    socialring.getTotalRecruits()
+                    );
+            responseList.add(response);
+        }
+
+        return responseList;
+
+    }
+
+    /**
+     * 참가 완료한 소셜링
+     */
+    @Transactional
+    public List<GetSocialringJoinStatusResponse> joinCompleteSocialring(Long memberId) {
+        log.info("[SocialringService.joinCompleteSocialring]");
+
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+
+        //현재 날짜
+        LocalDate nowDate = LocalDate.now();
+
+        // 멤버의 멤버소셜링리스트 추출
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findByMember_MemberIdAndAndStatus(memberId,BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+
+        // 참가중인 소셜링이 없을때 예외처리
+        if(memberSocialringList.isEmpty())
+            throw new MemberSocialringException(N0T_EXIST_JOIN_SOCIALRING);
+
+        // 멤버가 참여한 멤버소셜링 리스트 중에서 현재 날짜보다 더 전인 소셜링을 추출
+        List<Socialring> memberInjoinBeforeSocialrings = new ArrayList<>();
+        for(MemberSocialring memberSocialring : memberSocialringList ){
+            LocalDate socialringDate = memberSocialring.getSocialring().getSocialringDate();
+            if(socialringDate.isBefore(nowDate)){
+                memberInjoinBeforeSocialrings.add(memberSocialring.getSocialring());
+            }
+        }
+
+        //참가 예정인 소셜링이 존재하지않을떄 예외처리
+        if(memberInjoinBeforeSocialrings.isEmpty())
+            throw new MemberSocialringException(N0T_EXIST_JOIN_COMPLETE_SOCIALRING);
+
+        List<GetSocialringJoinStatusResponse> responseList = new ArrayList<>();
+        for(Socialring socialring : memberInjoinBeforeSocialrings ){
+
+            // 현재 참여중인 소셜링원 수 확인하기
+            int currentSocialrings  = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
+                    .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
+
+            GetSocialringJoinStatusResponse response = new GetSocialringJoinStatusResponse(socialring.getSocialringId(),
+                    socialring.getSocialringName(),socialring.getSocialringImg(),socialring.getActivityRegion().getActivityRegionName(),
+                    socialring.getSocialringDate(),socialring.getSocialringCost(),socialring.getCommentSimple(),currentSocialrings,
                     socialring.getTotalRecruits()
             );
             responseList.add(response);
@@ -279,7 +335,7 @@ public class SocialringService {
 
         return responseList;
     }
-     /**
+    /**
      * 소셜링 삭제하기
      */
     @Transactional
