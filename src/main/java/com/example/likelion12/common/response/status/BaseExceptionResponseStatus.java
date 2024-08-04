@@ -64,6 +64,7 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     ALREADY_EXIST_IN_CREW(10002, HttpStatus.BAD_REQUEST.value(), "해당 크루에 이미 등록된 멤버입니다."),
     NOT_MEMBERCREW_CAPTAIN(10003, HttpStatus.BAD_REQUEST.value(), "크루 수정,삭제에 접근할수없는 권한입니다."),
     NOT_CREW_MEMBERCREW(10004, HttpStatus.BAD_REQUEST.value(), "해당 크루에 참여 상태가 아닙니다."),
+    CANNOT_CREW_CANCEL(10005, HttpStatus.BAD_REQUEST.value(), "해당 크루를 탈퇴 할 수 없습니다. 크루 삭제를 이용해주세요."),
 
     /**
      * 11000 : Review 관련
