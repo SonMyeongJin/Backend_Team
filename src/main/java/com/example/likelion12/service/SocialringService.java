@@ -239,6 +239,7 @@ public class SocialringService {
         List<Socialring> allSocialrings = socialringRepository.findAllByStatus(BaseStatus.ACTIVE);
         List<GetSocialringSearchFilterResponse> responseList = new ArrayList<>();
 
+
         // 요청값의 범위 확인 후 필터링
         for (Socialring socialring : allSocialrings) {
             boolean matchesCriteria = true;
@@ -299,10 +300,17 @@ public class SocialringService {
                 }
             }
 
+            // 현재 참여중인 소셜링원 수 확인하기
+            int currentSocialrings = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
+                    .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
+
             // 조건에 맞으면 응답 리스트에 추가
             if (matchesCriteria) {
                 GetSocialringSearchFilterResponse response =
-                        new GetSocialringSearchFilterResponse(socialring.getSocialringId());
+                        new GetSocialringSearchFilterResponse(socialring.getSocialringId(),
+                                socialring.getSocialringName(),socialring.getSocialringImg(),
+                                socialring.getActivityRegion().getActivityRegionName(),socialring.getSocialringDate(),
+                                socialring.getSocialringCost(),socialring.getCommentSimple(),currentSocialrings,socialring.getTotalRecruits());
                 responseList.add(response);
             }
         }
