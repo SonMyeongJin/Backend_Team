@@ -5,6 +5,7 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
+import com.example.likelion12.dto.SearchRequest;
 import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -76,16 +77,20 @@ public class CrewService {
     /**
      * 크루  조회
      */
-    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, List<Long> crewIds) {
+    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, SearchRequest searchRequest) {
         log.info("[CrewService.getCrewInquiries]");
 
+        List<Crew> allCrews = crewRepository.findAllByStatus(BaseStatus.ACTIVE);
         List<GetCrewInquiryResponse> getCrewInquiryResponses = new ArrayList<>();
 
-        for (Long crewId : crewIds) {
+        // offset과 limit 계산
+        int offset = searchRequest.getOffset();
+        int recordSize = searchRequest.getRecordSize();
 
-            //조회하고자 하는 크루
-            Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
-                    .orElseThrow(() -> new CrewException(CANNOT_FOUND_CREW));
+        // 페이징 처리된 크루 목록 생성
+        for (int i = offset; i < Math.min(offset + recordSize, allCrews.size()); i++) {
+
+            Crew crew = allCrews.get(i);
 
             GetCrewInquiryResponse response = new GetCrewInquiryResponse(
                     crew.getCrewName(),
