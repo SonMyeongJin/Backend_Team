@@ -16,8 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.ALREADY_EXIST_EMAIL;
-import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_EXERCISE;
+import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
 
 @Slf4j
 @Service
@@ -83,6 +82,18 @@ public class MemberService {
         log.info("[MemberService.deleteMember] 회원 탈퇴 완료: {}", memberId);
 
         return memberId;
+    }
+
+    /**
+     * 로그아웃
+     */
+    public void logout(Long memberId){
+        log.info("[MemberService.logout]");
+        if(memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE).isPresent()){
+            tokenService.invalidateToken(memberId);
+        }else{
+            throw new MemberException(CANNOT_FOUND_MEMBER);
+        }
     }
 
 }
