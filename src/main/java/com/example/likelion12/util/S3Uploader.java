@@ -30,7 +30,7 @@ public class S3Uploader {
         try (InputStream inputStream = file.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, null));
         }
-        String fileUrl = String.valueOf(amazonS3.getUrl(bucketName,secretKey));
+        String fileUrl = String.valueOf(amazonS3.getUrl(bucketName,fileName));
         return fileUrl;
     }
 
