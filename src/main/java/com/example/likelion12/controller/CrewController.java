@@ -34,10 +34,10 @@ public class CrewController {
      */
     @GetMapping("/inquiry")
     public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestHeader("Authorization") String authorization,
-                                                                     @RequestParam List<Long> crewId){
+                                                                       @RequestParam int page){
         log.info("[CrewController.getCrewInquiries]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getCrewInquiries(memberId, crewId));
+        return new BaseResponse<>(crewService.getCrewInquiries(memberId,page));
     }
 
 

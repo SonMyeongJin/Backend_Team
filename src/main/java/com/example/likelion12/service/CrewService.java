@@ -78,16 +78,20 @@ public class CrewService {
     /**
      * 크루  조회
      */
-    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, List<Long> crewIds) {
+    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, int page) {
         log.info("[CrewService.getCrewInquiries]");
 
+        List<Crew> allCrews = crewRepository.findAllByStatus(BaseStatus.ACTIVE);
         List<GetCrewInquiryResponse> getCrewInquiryResponses = new ArrayList<>();
 
-        for (Long crewId : crewIds) {
+        // offset과 limit 계산
+        int offset = (page - 1) * 9;
+        int recordSize = 9 ;
 
-            //조회하고자 하는 크루
-            Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
-                    .orElseThrow(() -> new CrewException(CANNOT_FOUND_CREW));
+        // 페이징 처리된 크루 목록 생성
+        for (int i = offset; i < Math.min(offset + recordSize, allCrews.size()); i++) {
+
+            Crew crew = allCrews.get(i);
 
             GetCrewInquiryResponse response = new GetCrewInquiryResponse(
                     crew.getCrewName(),

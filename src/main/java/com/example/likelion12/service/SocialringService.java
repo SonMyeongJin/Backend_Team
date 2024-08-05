@@ -333,6 +333,7 @@ public class SocialringService {
 
         return responseList;
     }
+  
     /**
      * 소셜링 검색결과 필터링
      */
