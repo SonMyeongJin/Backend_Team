@@ -1,5 +1,6 @@
 package com.example.likelion12.dto.socialring;
 
+import com.example.likelion12.domain.base.BaseLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,11 +16,11 @@ public class GetSocialringResponse {
      */
     private String socialringName;
     private String socialringImg;
-    private LocalDate socialringDate;
-    private String activeAreaName;
-    private int totalRecurits;
-    private int socialringCost;
+    private String activityRegionName;
+    private String exerciseName;
+    private BaseLevel level;
     private String commentSimple;
 }
+
 
 
