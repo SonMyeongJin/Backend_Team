@@ -67,4 +67,8 @@ public class Member extends BaseTime {
         this.status = status;
         this.exercise = exercise;
     }
+
+    public void setStatus(BaseStatus status) {
+        this.status = status;
+    }
 }

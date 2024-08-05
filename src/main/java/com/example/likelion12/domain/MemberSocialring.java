@@ -50,4 +50,8 @@ public class MemberSocialring extends BaseTime {
     public void setStatusToDelete() {
         this.status = BaseStatus.DELETE;
     }
+
+    public void setStatus(BaseStatus status) {
+        this.status = status;
+    }
 }
