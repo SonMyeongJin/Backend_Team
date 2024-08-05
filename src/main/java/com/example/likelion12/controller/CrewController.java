@@ -1,11 +1,13 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
+import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
 import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -48,10 +50,10 @@ public class CrewController {
      */
     @GetMapping("")
     public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
-                                                             @RequestParam Long crewId){
+                                                             @RequestParam String crewName){
         log.info("[CrewController.getCrewDetail]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewId));
+        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewName));
     }
 
     /**
@@ -59,10 +61,10 @@ public class CrewController {
      */
     @PostMapping("/join")
     public BaseResponse<Void> joinCrew(@RequestHeader("Authorization") String authorization,
-                                                        @RequestParam Long crewId){
+                                                        @RequestParam String crewName){
         log.info("[CrewController.joinCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.joinCrew(memberId,crewId);
+        crewService.joinCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
@@ -82,10 +84,10 @@ public class CrewController {
      */
     @PatchMapping("/delete")
     public BaseResponse<Void> deleteCrew(@RequestHeader("Authorization") String authorization,
-                                         @RequestParam Long crewId){
+                                         @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.deleteCrew(memberId,crewId);
+        crewService.deleteCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
@@ -94,14 +96,27 @@ public class CrewController {
      */
     @PatchMapping("/cancel")
     public BaseResponse<Void> cancelCrew(@RequestHeader("Authorization") String authorization,
-                                         @RequestParam Long crewId){
+                                         @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.cancelCrew(memberId,crewId);
+        crewService.cancelCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
     /**
+     * 크루 검색
+     */
+    @GetMapping("/search")
+    public BaseResponse<Page<GetCrewSearchResponse>> searchCrews(
+            @RequestParam(required = false) String keyWord,
+            @RequestParam(required = false) String activityRegionName,
+            @RequestParam(required = false) String exerciseName,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Page<GetCrewSearchResponse> responses = crewService.searchCrews(keyWord, activityRegionName, exerciseName,page, 9);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, responses);
+    }
+  /**
      * 참여중인 크루 조회
      */
     @GetMapping("/join")

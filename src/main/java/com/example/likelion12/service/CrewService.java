@@ -11,6 +11,8 @@ import com.example.likelion12.repository.*;
 import com.example.likelion12.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
@@ -114,16 +117,16 @@ public class CrewService {
     /**
      * 크루 상세 조회
      */
-    public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
+    public GetCrewDetailResponse getCrewDetail(Long memberId, String crewName){
         log.info("[CrewService.getCrewDetail]");
 
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crewId, BaseStatus.ACTIVE)
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()-> new CrewException(CANNOT_FOUND_MEMBERCREW));
 
         // 가입한 멤버 리스트 추출
-        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
         // 그 멤버 중에서 사진만 추출해서 반환
         List<GetCrewDetailResponse.Crews> memberImgList = memberCrewList.stream()
@@ -156,24 +159,26 @@ public class CrewService {
      * 크루 참여하기
      */
     @Transactional
-    public void joinCrew(Long memberId, Long crewId){
+    public void joinCrew(Long memberId, String crewName){
         log.info("[CrewService.joinCrew]");
         // 참여하려는 member 찾기
         Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
+        //크루 찾기
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
+
         //크루 아이디로 참여하려는 크루 찾기
-        if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crewId, BaseStatus.ACTIVE)){
+        if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crew.getCrewId(), BaseStatus.ACTIVE)){
             throw new MemberCrewException(ALREADY_EXIST_IN_CREW);
         }
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
-                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
 
         // 참여하려는 크루의 총 모집 인원 확인하기
         int totalRecruits = crew.getTotalRecruits();
 
         // 현재 참여중인 크루원 수 확인하기
-        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()->new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
         int currentCrews = memberCrewList.size();
 
@@ -280,7 +285,7 @@ public class CrewService {
      * 크루 삭제하기
      */
     @Transactional
-    public void deleteCrew(Long memberId, Long crewId) {
+    public void deleteCrew(Long memberId, String crewName) {
         log.info("[CrewService.deleteCrew]");
 
         // 크루를 삭제하고자 하는  member
@@ -288,19 +293,19 @@ public class CrewService {
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         //삭제하고자 하는 크루
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
 
         //삭제하고자 하는 크루의 멤버크루
         //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crewId, BaseStatus.ACTIVE)
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
 
         //멤버가 CAPTAIN 권한인지 유효성 검사
         memberCrewService.ConfirmCaptainMemberCrew(memberCrew);
 
         //삭제하고자 하는 크루의 멤버크루리스트
-        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()->new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
 
         // 멤버 크루리스트 삭제
@@ -317,7 +322,7 @@ public class CrewService {
      * 크루 탈퇴하기
      */
     @Transactional
-    public void cancelCrew(Long memberId, Long crewId) {
+    public void cancelCrew(Long memberId, String crewName) {
         log.info("[CrewService.cancelCrew]");
 
         // 크루를 탈퇴하고자 하는  member
@@ -325,13 +330,13 @@ public class CrewService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         //탈퇴하고자 하는 크루
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
-                .orElseThrow(() -> new CrewException(CANNOT_FOUND_CREW));
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
 
         //탈퇴하고자 하는 크루의 멤버크루
         //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crewId, BaseStatus.ACTIVE)
-                .orElseThrow(() -> new MemberCrewException(NOT_CREW_MEMBERCREW));
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crew.getCrewId(), BaseStatus.ACTIVE)
+                .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
 
         //CAPTAIN일 경우 예외처리 --> 크루삭제
         if (BaseRole.CAPTAIN.equals(memberCrew.getRole())){
@@ -377,5 +382,53 @@ public class CrewService {
 
         // 반환하기
         return joinCrewResponses;
+    }
+
+    /**
+     * 크루 검색
+     */
+    public Page<GetCrewSearchResponse> searchCrews(String keyWord, String activityRegionName, String exerciseName, int page, int size) {
+        Long activityRegionId = getActivityRegionIdByName(activityRegionName, BaseStatus.ACTIVE);
+        Long exerciseId = getActivityExerciseIdByName(exerciseName, BaseStatus.ACTIVE);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Crew> results = crewRepository.searchCrew(
+                keyWord, exerciseId, activityRegionId, BaseStatus.ACTIVE, pageable
+        );
+        return results.map(crew -> {
+            return new GetCrewSearchResponse(
+                    crew.getCrewId(),
+                    crew.getCrewName(),
+                    crew.getCrewImg(),
+                    crew.getActivityRegion().getActivityRegionName(),
+                    crew.getCommentSimple(),
+                    crew.getLevel(),
+                    crew.getExercise().getExerciseName()
+            );
+        });
+    }
+
+    private Long getActivityRegionIdByName(String name, BaseStatus status){
+        Long activityRegionId = null;
+        /** 이름으로 지역아이디 얻기 */
+        if (name != null) {
+            Optional<ActivityRegion> activityRegionOpt = activityRegionRepository.findByActivityRegionNameAndStatus(name, status);
+            if (activityRegionOpt.isPresent()) {
+                activityRegionId = activityRegionOpt.get().getActivityRegionId();
+            }
+        }
+        return activityRegionId;
+    }
+
+    private Long getActivityExerciseIdByName(String name, BaseStatus status){
+        Long ExerciseId = null;
+        /** 이름으로 활동아이디 얻기 */
+        if (name != null) {
+            Optional<Exercise> activityRegionOpt = exerciseRepository.findByExerciseNameAndStatus(name, status);
+            if (activityRegionOpt.isPresent()) {
+                ExerciseId = activityRegionOpt.get().getExerciseId();
+            }
+        }
+        return ExerciseId;
     }
 }
