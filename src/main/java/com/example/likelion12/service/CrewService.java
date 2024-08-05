@@ -85,7 +85,7 @@ public class CrewService {
 
         // offset과 limit 계산
         int offset = searchRequest.getOffset();
-        int recordSize = searchRequest.getRecordSize();
+        int recordSize = 9 ;
 
         // 페이징 처리된 크루 목록 생성
         for (int i = offset; i < Math.min(offset + recordSize, allCrews.size()); i++) {
