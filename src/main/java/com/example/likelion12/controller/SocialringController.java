@@ -2,6 +2,7 @@ package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
+import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.service.SocialringService;
 import com.example.likelion12.util.*;
@@ -69,6 +70,17 @@ public class SocialringController {
     }
 
     /**
+     * 소셜링 검색결과 필터링
+     */
+    @GetMapping("/search/filter")
+    public BaseResponse<List<GetSocialringSearchFilterResponse>> searchFilterSocialring(@RequestHeader("Authorization") String authorization,
+                                                                                        @RequestBody GetSocialringSearchFilterRequest getSocialringSearchFilterRequest){
+        log.info("[SocialringController.searchFilterSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(socialringService.searchFilterSocialring(memberId, getSocialringSearchFilterRequest));
+    }
+  
+    /**
      * 참가 예정인 소셜링
      */
     @GetMapping("/join/before")
@@ -114,4 +126,17 @@ public class SocialringController {
         Page<GetSocialringSearchResponse> responses = socialringService.searchSocialrings(keyWord, socialringDate, activityRegionName, page, 9);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, responses);
     }
+  
+    /**
+     * 소셜링 취소하기
+     */
+    @PatchMapping("/cancel")
+    public BaseResponse<Void> cancelSocialring(@RequestHeader("Authorization") String authorization,
+                                               @RequestParam("socialringId") Long socialringId) {
+        log.info("[SocialringController.cancelSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        socialringService.cancelSocialring(memberId, socialringId);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
+    }
+
 }

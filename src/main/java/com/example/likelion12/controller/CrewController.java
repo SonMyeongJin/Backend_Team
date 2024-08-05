@@ -1,14 +1,16 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
-import com.example.likelion12.dto.crew.GetCrewDetailResponse;
-import com.example.likelion12.dto.crew.PostCrewRequest;
-import com.example.likelion12.dto.crew.PostCrewResponse;
+import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
+import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -29,6 +31,17 @@ public class CrewController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(crewService.createCrew(memberId, postCrewRequest));
     }
+    /**
+     * 크루 조회
+     */
+    @GetMapping("/inquiry")
+    public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestHeader("Authorization") String authorization,
+                                                                       @RequestParam int page){
+        log.info("[CrewController.getCrewInquiries]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(crewService.getCrewInquiries(memberId,page));
+    }
+
 
     /**
      * 크루 상세 조회
@@ -51,6 +64,17 @@ public class CrewController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         crewService.joinCrew(memberId,crewId);
         return new BaseResponse<>(null);
+    }
+
+    /**
+     * 크루 검색결과 필터링
+     */
+    @GetMapping("/search/filter")
+    public BaseResponse<List<GetCrewSearchFilterResponse>> searchFilterCrew(@RequestHeader("Authorization") String authorization,
+                                                                            @RequestBody GetCrewSearchFilterRequest getCrewSearchFilterRequest) {
+        log.info("[CrewController.searchFilterCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(crewService.searchFilterCrew(memberId, getCrewSearchFilterRequest));
     }
 
     /**
@@ -77,4 +101,27 @@ public class CrewController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 크루 검색
+     */
+    @GetMapping("/search")
+    public BaseResponse<Page<GetCrewSearchResponse>> searchCrews(
+            @RequestParam(required = false) String keyWord,
+            @RequestParam(required = false) String activityRegionName,
+            @RequestParam(required = false) String exerciseName,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Page<GetCrewSearchResponse> responses = crewService.searchCrews(keyWord, activityRegionName, exerciseName,page, 9);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, responses);
+    }
+  /**
+     * 참여중인 크루 조회
+     */
+    @GetMapping("/join")
+    public BaseResponse<List<GetJoinCrewResponse>> getJoinCrew(@RequestHeader("Authorization") String authorization) {
+        log.info("[CrewController.getJoinCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        List<GetJoinCrewResponse> joinCrewResponses = crewService.getJoinCrew(memberId);
+        return new BaseResponse<>(joinCrewResponses);
+    }
 }

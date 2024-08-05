@@ -43,4 +43,5 @@ public interface SocialringRepository extends JpaRepository<Socialring, Long> {
             @Param("status") BaseStatus status,
             Pageable pageable
     );
+    List<Socialring> findAllByStatus(BaseStatus baseStatus);
 }
