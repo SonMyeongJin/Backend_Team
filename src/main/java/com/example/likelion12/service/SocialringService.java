@@ -405,7 +405,6 @@ public class SocialringService {
                     matchesCriteria = false;
                 }
             }
-          
             // 현재 참여중인 소셜링원 수 확인하기
             int currentSocialrings = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
                     .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
