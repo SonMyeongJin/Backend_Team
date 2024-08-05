@@ -1,11 +1,7 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
-import com.example.likelion12.dto.crew.GetCrewDetailResponse;
-import com.example.likelion12.dto.crew.GetJoinCrewResponse;
-import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
-import com.example.likelion12.dto.crew.PostCrewRequest;
-import com.example.likelion12.dto.crew.PostCrewResponse;
+import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +62,17 @@ public class CrewController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         crewService.joinCrew(memberId,crewId);
         return new BaseResponse<>(null);
+    }
+
+    /**
+     * 크루 검색결과 필터링
+     */
+    @GetMapping("/search/filter")
+    public BaseResponse<List<GetCrewSearchFilterResponse>> searchFilterCrew(@RequestHeader("Authorization") String authorization,
+                                                                            @RequestBody GetCrewSearchFilterRequest getCrewSearchFilterRequest) {
+        log.info("[CrewController.searchFilterCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(crewService.searchFilterCrew(memberId, getCrewSearchFilterRequest));
     }
 
     /**
