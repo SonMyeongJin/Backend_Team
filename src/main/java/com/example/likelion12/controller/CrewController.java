@@ -1,13 +1,16 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
+import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.GetCrewSearchResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -77,4 +80,17 @@ public class CrewController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 크루 검색
+     */
+    @GetMapping("/search")
+    public BaseResponse<Page<GetCrewSearchResponse>> searchSocialrings(
+            @RequestParam(required = false) String keyWord,
+            @RequestParam(required = false) String activityRegionName,
+            @RequestParam(required = false) String exerciseName,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Page<GetCrewSearchResponse> responses = crewService.searchCrews(keyWord, activityRegionName, exerciseName,page, 9);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, responses);
+    }
 }
