@@ -81,7 +81,7 @@ public class SocialringService {
      * 소셜링 수정
      */
     @Transactional
-    public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) {
+    public void modifySocialring(Long memberId, String socialringName, PatchSocialringModifyRequest patchSocialringModifyRequest) {
         log.info("[SocialringService.modifySocialring]");
 
         //소셜링을 수정하고자 하는 멤버
@@ -89,12 +89,12 @@ public class SocialringService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         //수정하고자 하는 소셜링
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         //수정하고자 하는 멤버의 멤버소셜링
         MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
-                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+                socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
 
         //접근 멤버가 captain인지 유효성 검사
         memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);
@@ -155,19 +155,19 @@ public class SocialringService {
      * 소셜링 상세 조회
      */
     @Transactional
-    public GetSocialringDetailResponse getSocialringDetail(Long memberId, Long socialringId) {
+    public GetSocialringDetailResponse getSocialringDetail(Long memberId, String socialringName) {
         log.info("[SocialringService.getSocialringDetail]");
 
         // 상세조회하고자 하는 소셜링
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         // 상세조회하고자 하는 멤버의 멤버소셜링
         MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
-                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+                socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
         // 소셜링에 등록된 멤버 리스트 추출
         List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
-                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+                (socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
         // 소셜링에 등록된 멤버 리스트에서 사진만 추출해서 반환
         List<GetSocialringDetailResponse.Socialrings> memberImgList = memberSocialringList.stream()
                 .map(MemberSocialring -> new GetSocialringDetailResponse.Socialrings(memberSocialring.getMember().getMemberImg()))
@@ -201,7 +201,7 @@ public class SocialringService {
      * 소셜링 참여하기
      */
     @Transactional
-    public void joinSocialring(Long memberId, Long socialringId) {
+    public void joinSocialring(Long memberId, String socialringName) {
         log.info("[SocialringService.joinSocialring]");
 
         //소셜링을 참여하고자 하는 멤버
@@ -209,11 +209,11 @@ public class SocialringService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         //참여하고자 하는 소셜링
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         //해당 소셜링에 이미 등록되어있다면 예외처리
-        if(memberSocialringRepository.existsByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,socialringId,BaseStatus.ACTIVE)){
+        if(memberSocialringRepository.existsByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,socialring.getSocialringId(),BaseStatus.ACTIVE)){
             throw new MemberSocialringException(ALREADY_EXIST_IN_SOCIALRING);
         }
 
@@ -221,7 +221,7 @@ public class SocialringService {
         int totalRecruits = socialring.getTotalRecruits();
 
         // 현재 참여중인 소셜링원 수 확인하기
-        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialringId,BaseStatus.ACTIVE)
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST));
         int currentSocialrings = memberSocialringList.size();
 
@@ -437,7 +437,7 @@ public class SocialringService {
      * 소셜링 삭제하기
      */
     @Transactional
-    public void deleteSocialring(Long memberId, Long socialringId) {
+    public void deleteSocialring(Long memberId, String socialringName) {
         log.info("[SocialringService.deleteSocialring]");
 
         // 소셜링을 삭제하고자 하는 멤버를 찾기
@@ -445,11 +445,11 @@ public class SocialringService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         // 삭제하고자 하는 소셜링이 존재하는지 확인
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         // 소셜링을 삭제하고자 하는 멤버의 멤버소셜링을 찾기
-        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId, socialringId, BaseStatus.ACTIVE)
+        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId, socialring.getSocialringId(), BaseStatus.ACTIVE)
                 .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
 
         // 접근 멤버가 CAPTAIN인지 유효성 검사
@@ -462,7 +462,7 @@ public class SocialringService {
         // 소설링이 참조하고 있는 멤버 소셜링의 상태를 전부 DELETE로 변경
             // 소셜링에 등록된 멤버 리스트 추출
         List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
-                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+                (socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
             // 해당 리스트의 멤버의 상태를 DELETE로 변경
         for (MemberSocialring memberSocialringEntry : memberSocialringList) {
             memberSocialringEntry.setStatus(DELETE);
@@ -513,7 +513,7 @@ public class SocialringService {
      * 소셜링 취소
      */
     @Transactional
-    public void cancelSocialring(Long memberId, Long socialringId) {
+    public void cancelSocialring(Long memberId, String socialringName) {
         log.info("[SocialringService.cancelSocialring]");
 
         // 소셜링을 취소하고자 하는 멤버 찾고
@@ -521,12 +521,12 @@ public class SocialringService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         // 취소하고자 하는 소셜링 찾고
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         // 해당 소셜링에 등록된 멤버 소셜링 중, 취소할 멤버의 멤버소셜링 값을 가져와서
         MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
-                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+                socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
 
         // 가져온 멤버 소셜링의 값으로 캡틴인지 확인하고
         memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);

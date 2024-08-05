@@ -20,6 +20,7 @@ public interface SocialringRepository extends JpaRepository<Socialring, Long> {
     Optional<List<Socialring>> findTop4ByOrderBySocialringDate();
 
     Optional<Socialring> findBySocialringIdAndStatus(Long socialringId, BaseStatus status);
+    Optional<Socialring> findBySocialringNameAndStatus(String socialringName, BaseStatus status);
 
     // 특정 activity_region_id 값을 가진 상위 3개의 Socialring를 반환하는 쿼리
     @Query("SELECT c FROM Socialring c WHERE c.activityRegion.id = :activityRegionId AND c.status = :status ORDER BY c.socialringId ASC")

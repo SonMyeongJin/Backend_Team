@@ -48,10 +48,10 @@ public class CrewController {
      */
     @GetMapping("")
     public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
-                                                             @RequestParam Long crewId){
+                                                             @RequestParam String crewName){
         log.info("[CrewController.getCrewDetail]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewId));
+        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewName));
     }
 
     /**
@@ -59,10 +59,10 @@ public class CrewController {
      */
     @PostMapping("/join")
     public BaseResponse<Void> joinCrew(@RequestHeader("Authorization") String authorization,
-                                                        @RequestParam Long crewId){
+                                                        @RequestParam String crewName){
         log.info("[CrewController.joinCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.joinCrew(memberId,crewId);
+        crewService.joinCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
@@ -82,10 +82,10 @@ public class CrewController {
      */
     @PatchMapping("/delete")
     public BaseResponse<Void> deleteCrew(@RequestHeader("Authorization") String authorization,
-                                         @RequestParam Long crewId){
+                                         @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.deleteCrew(memberId,crewId);
+        crewService.deleteCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
@@ -94,10 +94,10 @@ public class CrewController {
      */
     @PatchMapping("/cancel")
     public BaseResponse<Void> cancelCrew(@RequestHeader("Authorization") String authorization,
-                                         @RequestParam Long crewId){
+                                         @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.cancelCrew(memberId,crewId);
+        crewService.cancelCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
