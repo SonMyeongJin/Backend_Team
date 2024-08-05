@@ -150,24 +150,26 @@ public class CrewService {
      * 크루 참여하기
      */
     @Transactional
-    public void joinCrew(Long memberId, Long crewId){
+    public void joinCrew(Long memberId, String crewName){
         log.info("[CrewService.joinCrew]");
         // 참여하려는 member 찾기
         Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
+        //크루 찾기
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
+                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
+
         //크루 아이디로 참여하려는 크루 찾기
-        if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crewId, BaseStatus.ACTIVE)){
+        if(memberCrewRepository.existsByMember_MemberIdAndCrew_CrewIdAndStatus(memberId,crew.getCrewId(), BaseStatus.ACTIVE)){
             throw new MemberCrewException(ALREADY_EXIST_IN_CREW);
         }
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
-                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
 
         // 참여하려는 크루의 총 모집 인원 확인하기
         int totalRecruits = crew.getTotalRecruits();
 
         // 현재 참여중인 크루원 수 확인하기
-        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()->new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
         int currentCrews = memberCrewList.size();
 

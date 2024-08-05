@@ -60,10 +60,10 @@ public class CrewController {
      */
     @PostMapping("/join")
     public BaseResponse<Void> joinCrew(@RequestHeader("Authorization") String authorization,
-                                                        @RequestParam Long crewId){
+                                                        @RequestParam String crewName){
         log.info("[CrewController.joinCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.joinCrew(memberId,crewId);
+        crewService.joinCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
