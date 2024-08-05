@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -26,11 +27,12 @@ public class CrewController {
      */
     @PostMapping("")
     public BaseResponse<PostCrewResponse> createCrew(@RequestHeader("Authorization") String authorization,
-                                                     @RequestBody PostCrewRequest postCrewRequest){
+                                                     @ModelAttribute PostCrewRequest postCrewRequest) throws IOException {
         log.info("[CrewController.createCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(crewService.createCrew(memberId, postCrewRequest));
     }
+
     /**
      * 크루 조회
      */

@@ -4,6 +4,7 @@ import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -14,7 +15,7 @@ public class PatchSocialringModifyRequest {
      * 소셜링 수정 request dto
      */
     private String socialringName;
-    private String socialringImg;
+    private MultipartFile socialringImg;
     private String activityRegionName;
     private String facilityName;
     private String exerciseName;
