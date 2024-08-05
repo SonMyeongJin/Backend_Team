@@ -2,7 +2,6 @@ package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
-import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.service.SocialringService;
 import com.example.likelion12.util.*;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -27,8 +27,7 @@ public class SocialringController {
      */
     @PostMapping("")
     public BaseResponse<PostSocialringResponse> createSocialring(@RequestHeader("Authorization") String authorization ,
-                                                                 @RequestBody PostSocialringRequest postSocialringRequest)
-    {   //헤더에서 소셜링 등록하는 멤버아이디 찾기
+                                                                 @RequestBody PostSocialringRequest postSocialringRequest) throws IOException {   //헤더에서 소셜링 등록하는 멤버아이디 찾기
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(socialringService.createSocialring(memberId,postSocialringRequest));
     }
@@ -38,8 +37,7 @@ public class SocialringController {
      */
     @PatchMapping("")
     public BaseResponse<Void> modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam long socialringId,
-                                                                 @RequestBody PatchSocialringModifyRequest patchSocialringModifyRequest)
-    {
+                                                                 @RequestBody PatchSocialringModifyRequest patchSocialringModifyRequest) throws IOException {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         socialringService.modifySocialring(memberId,socialringId,patchSocialringModifyRequest);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);

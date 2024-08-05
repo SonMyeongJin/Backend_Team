@@ -1,7 +1,6 @@
 package com.example.likelion12.service;
 
 import com.example.likelion12.common.exception.*;
-import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
@@ -9,6 +8,7 @@ import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.repository.*;
+import com.example.likelion12.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,19 +36,19 @@ public class CrewService {
     private final MemberRepository memberRepository;
     private final MemberCrewService memberCrewService;
     private final MemberCrewRepository memberCrewRepository;
+    private final S3Uploader s3Uploader;
 
     /**
      * 크루 등록
      */
     @Transactional
-    public PostCrewResponse createCrew(Long memberId, PostCrewRequest postCrewRequest){
+    public PostCrewResponse createCrew(Long memberId, PostCrewRequest postCrewRequest) throws IOException {
         log.info("[CrewService.createCrew]");
 
         Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         String crewName = postCrewRequest.getCrewName();
-        String crewImg = postCrewRequest.getCrewImg();
         Long activityRegionId = postCrewRequest.getActivityRegionId();
         Long facilityId = postCrewRequest.getFacilityId();
         Long exerciseId = postCrewRequest.getExerciseId();
@@ -67,6 +68,7 @@ public class CrewService {
         Exercise exercise = exerciseRepository.findByExerciseIdAndStatus(exerciseId,BaseStatus.ACTIVE)
                 .orElseThrow(()-> new ExerciseException(CANNOT_FOUND_EXERCISE));
 
+        String crewImg = s3Uploader.uploadFileToS3(postCrewRequest.getCrewImg(),"crew/");
         Crew crew = new Crew(crewName, crewImg, totalRecruits, crewCost,simpleComment,comment
                 ,gender,level,activityRegion,facility, exercise, BaseStatus.ACTIVE);
         crewRepository.save(crew);
@@ -74,6 +76,7 @@ public class CrewService {
         memberCrewService.createMemberCaptain(member,crew);
         return new PostCrewResponse(crew.getCrewId());
     }
+
 
     /**
      * 크루  조회

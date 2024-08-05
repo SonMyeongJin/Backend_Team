@@ -8,12 +8,15 @@ import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.repository.*;
+import com.example.likelion12.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ import static com.example.likelion12.domain.base.BaseStatus.DELETE;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SocialringService {
     private final SocialringRepository socialringRepository;
     private final MemberRepository memberRepository;
@@ -33,18 +37,19 @@ public class SocialringService {
     private final MemberSocialringService memberSocialringService;
     private final ActivityRegionRepository activityRegionRepository;
     private final MemberSocialringRepository memberSocialringRepository;
+    private final S3Uploader s3Uploader;
 
     /**
      * 소셜링 등록
      */
     @Transactional
-    public PostSocialringResponse createSocialring(Long memberId, PostSocialringRequest postSocialringRequest) {
+    public PostSocialringResponse createSocialring(Long memberId, PostSocialringRequest postSocialringRequest) throws IOException {
         log.info("[SocialringService.createSocialring]");
         Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         String socialringName = postSocialringRequest.getSocialringName();
-        String socialringImg = postSocialringRequest.getSocialringImg();
+        MultipartFile socialringImg = postSocialringRequest.getSocialringImg();
         long activityRegionId = postSocialringRequest.getActivityRegionId();
         long facilityId = postSocialringRequest.getFacilityId();
         long exerciseId = postSocialringRequest.getExerciseId();
@@ -63,7 +68,8 @@ public class SocialringService {
         Exercise exercise = exerciseRepository.findByExerciseIdAndStatus(exerciseId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new ExerciseException(CANNOT_FOUND_EXERCISE));
 
-        Socialring socialring = new Socialring(socialringName, socialringImg, totalRecruits, socialringDate, socialringCost, comment, commentSimple,
+        String socialringImgUrl = s3Uploader.uploadFileToS3(socialringImg,"socialring/");
+        Socialring socialring = new Socialring(socialringName, socialringImgUrl, totalRecruits, socialringDate, socialringCost, comment, commentSimple,
                 gender, level, activityRegion, facility, exercise, BaseStatus.ACTIVE);
         socialringRepository.save(socialring);
 
@@ -76,7 +82,7 @@ public class SocialringService {
      * 소셜링 수정
      */
     @Transactional
-    public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) {
+    public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) throws IOException {
         log.info("[SocialringService.modifySocialring]");
 
         //소셜링을 수정하고자 하는 멤버
@@ -96,8 +102,6 @@ public class SocialringService {
 
         String newSocialringName = patchSocialringModifyRequest.getSocialringName()
                 == null ? socialring.getSocialringName() : patchSocialringModifyRequest.getSocialringName();
-        String newSocialringImg = patchSocialringModifyRequest.getSocialringImg()
-                == null ? socialring.getSocialringImg() : patchSocialringModifyRequest.getSocialringImg();
         Integer newTotalRecruits = patchSocialringModifyRequest.getTotalRecruits()
                 == null ? socialring.getTotalRecruits() : patchSocialringModifyRequest.getTotalRecruits();
         LocalDate newSocialringDate = patchSocialringModifyRequest.getSocialringDate()
@@ -116,10 +120,10 @@ public class SocialringService {
         long newActivityRegionId =
                 patchSocialringModifyRequest.getActivityRegionName() == null ?
                         socialring.getActivityRegion().getActivityRegionId() :
-                //리퀘스트로 들어온값이 존재하는 값인지 네임으로 찾아서 아이디값 반환 후 아이디값 수정
-                activityRegionRepository.findByActivityRegionNameAndStatus(
-                        patchSocialringModifyRequest.getActivityRegionName(), BaseStatus.ACTIVE)
-                .orElseThrow(() -> new ActivityRegionException(CANNOT_FOUND_ACTIVITYREGION)).getActivityRegionId();
+                        //리퀘스트로 들어온값이 존재하는 값인지 네임으로 찾아서 아이디값 반환 후 아이디값 수정
+                        activityRegionRepository.findByActivityRegionNameAndStatus(
+                                        patchSocialringModifyRequest.getActivityRegionName(), BaseStatus.ACTIVE)
+                                .orElseThrow(() -> new ActivityRegionException(CANNOT_FOUND_ACTIVITYREGION)).getActivityRegionId();
         long newFacilityId = patchSocialringModifyRequest.getFacilityName()
                 == null ? socialring.getFacility().getFacilityId() :
                 facilityRepository.findByFacilityNameAndStatus(
@@ -138,7 +142,8 @@ public class SocialringService {
         Exercise exercise = exerciseRepository.findByExerciseIdAndStatus(newExerciseId, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new ExerciseException(CANNOT_FOUND_EXERCISE));
 
-
+        String newSocialringImg = patchSocialringModifyRequest.getSocialringImg()
+                == null ? socialring.getSocialringImg() : s3Uploader.uploadFileToS3(patchSocialringModifyRequest.getSocialringImg(),"socialring/");
         //변경사항 업데이트 및 저장
         socialring.UpdateSocialringInfo(newSocialringName, newSocialringImg, newTotalRecruits, newSocialringDate, newSocialringCost,
                 newComment, newCommentSimple, newGender, newLevel, activityRegion, facility, exercise);

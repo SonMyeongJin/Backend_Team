@@ -40,6 +40,15 @@ dependencies {
 	implementation 'org.json:json:20210307'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'javax.servlet:javax.servlet-api:4.0.1' // 서블릿 API 추가
+
+	// AWS SDK
+	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.228')
+	implementation 'com.amazonaws:aws-java-sdk-s3'
+	// JAXB API
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+
+	// JAXB runtime dependencies
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 }
 
 tasks.named('test') {
