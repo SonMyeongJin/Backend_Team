@@ -76,7 +76,7 @@ public class SocialringService {
      * 소셜링 수정
      */
     @Transactional
-    public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) {
+    public void modifySocialring(Long memberId, String socialringName, PatchSocialringModifyRequest patchSocialringModifyRequest) {
         log.info("[SocialringService.modifySocialring]");
 
         //소셜링을 수정하고자 하는 멤버
@@ -84,12 +84,12 @@ public class SocialringService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         //수정하고자 하는 소셜링
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         //수정하고자 하는 멤버의 멤버소셜링
         MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
-                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+                socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
 
         //접근 멤버가 captain인지 유효성 검사
         memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);

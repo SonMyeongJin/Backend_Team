@@ -37,11 +37,11 @@ public class SocialringController {
      * 소셜링 수정
      */
     @PatchMapping("")
-    public BaseResponse<Void> modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam long socialringId,
+    public BaseResponse<Void> modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam String socialringName,
                                                                  @RequestBody PatchSocialringModifyRequest patchSocialringModifyRequest)
     {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        socialringService.modifySocialring(memberId,socialringId,patchSocialringModifyRequest);
+        socialringService.modifySocialring(memberId,socialringName,patchSocialringModifyRequest);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
 
