@@ -502,9 +502,8 @@ public class SocialringService {
      * 소셜링 조회
      */
     @Transactional
-    public void getSocialring(Long memberId, Long socialriongId) {
+    public void getSocialring(int page , int recordSize ,int pageSize) {
 
-        // 멤버
 
     }
 }
