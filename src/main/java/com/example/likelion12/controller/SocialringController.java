@@ -79,6 +79,26 @@ public class SocialringController {
     }
   
     /**
+     * 참가 예정인 소셜링
+     */
+    @GetMapping("/join/before")
+    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinBeforeSocialring(@RequestHeader("Authorization") String authorization){
+        log.info("[SocialringController.joinBeforeSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(socialringService.joinBeforeSocialring(memberId));
+    }
+
+    /**
+     * 참가 완료한 소셜링
+     */
+    @GetMapping("/join/complete")
+    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinCompleteSocialring(@RequestHeader("Authorization") String authorization){
+        log.info("[SocialringController.joinCompleteSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(socialringService.joinCompleteSocialring(memberId));
+    }
+
+   /**
      * 소셜링 삭제하기
      */
     @PatchMapping("/delete")
