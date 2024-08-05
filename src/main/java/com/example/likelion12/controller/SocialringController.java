@@ -50,10 +50,10 @@ public class SocialringController {
      */
     @GetMapping("")
     public BaseResponse<GetSocialringDetailResponse> getSocialringDetail(@RequestHeader("Authorization") String authorization,
-                                                                         @RequestParam Long socialringId){
+                                                                         @RequestParam String socialringName){
         log.info("[SocialringController.getSocialringDetail]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(socialringService.getSocialringDetail(memberId, socialringId));
+        return new BaseResponse<>(socialringService.getSocialringDetail(memberId, socialringName));
     }
 
     /**

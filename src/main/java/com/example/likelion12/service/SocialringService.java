@@ -150,19 +150,19 @@ public class SocialringService {
      * 소셜링 상세 조회
      */
     @Transactional
-    public GetSocialringDetailResponse getSocialringDetail(Long memberId, Long socialringId) {
+    public GetSocialringDetailResponse getSocialringDetail(Long memberId, String socialringName) {
         log.info("[SocialringService.getSocialringDetail]");
 
         // 상세조회하고자 하는 소셜링
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         // 상세조회하고자 하는 멤버의 멤버소셜링
         MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
-                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+                socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
         // 소셜링에 등록된 멤버 리스트 추출
         List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
-                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+                (socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
         // 소셜링에 등록된 멤버 리스트에서 사진만 추출해서 반환
         List<GetSocialringDetailResponse.Socialrings> memberImgList = memberSocialringList.stream()
                 .map(MemberSocialring -> new GetSocialringDetailResponse.Socialrings(memberSocialring.getMember().getMemberImg()))
