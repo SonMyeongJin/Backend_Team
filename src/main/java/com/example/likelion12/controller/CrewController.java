@@ -84,7 +84,7 @@ public class CrewController {
      * 크루 검색
      */
     @GetMapping("/search")
-    public BaseResponse<Page<GetCrewSearchResponse>> searchSocialrings(
+    public BaseResponse<Page<GetCrewSearchResponse>> searchCrews(
             @RequestParam(required = false) String keyWord,
             @RequestParam(required = false) String activityRegionName,
             @RequestParam(required = false) String exerciseName,
