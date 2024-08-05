@@ -4,6 +4,7 @@ import com.example.likelion12.common.exception.*;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
+import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
 import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
@@ -226,22 +227,27 @@ public class CrewService {
 
         // 크루를 탈퇴하고자 하는  member
         Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
-                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         //탈퇴하고자 하는 크루
         Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
-                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
+                .orElseThrow(() -> new CrewException(CANNOT_FOUND_CREW));
 
         //탈퇴하고자 하는 크루의 멤버크루
         //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crewId, BaseStatus.ACTIVE)
-                .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crewId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberCrewException(NOT_CREW_MEMBERCREW));
 
-        //CAPTAIN일 경우 크루 삭제
-        if(memberCrewService.ConfirmCaptainMemberCrew(memberCrew))
-            deleteCrew(memberId,crewId);
-        else //크루 탈퇴
-        memberCrewRepository.delete(memberCrew);
+        //CAPTAIN일 경우 예외처리 --> 크루삭제
+        if (BaseRole.CAPTAIN.equals(memberCrew.getRole())){
+            throw new MemberCrewException(CANNOT_CREW_CANCEL);
+        }
+        //크루 탈퇴
+        else {
+            //멤버크루 삭제
+            memberCrew.DeleteMemberCrewInfo(BaseStatus.DELETE);
+            memberCrewRepository.save(memberCrew);
+       }
 
     }
 }
