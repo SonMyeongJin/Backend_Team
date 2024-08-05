@@ -9,6 +9,8 @@ import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
@@ -24,6 +27,7 @@ import static com.example.likelion12.domain.base.BaseStatus.DELETE;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SocialringService {
     private final SocialringRepository socialringRepository;
     private final MemberRepository memberRepository;
@@ -315,4 +319,48 @@ public class SocialringService {
             memberSocialringRepository.save(memberSocialringEntry);
         }
     }
+
+    /**
+     * 소셜링 검색
+     */
+    @Transactional(readOnly = true) /** 클래스 선언부에 붙이면 떼어도되는 애노테이션! */
+    public Page<GetSocialringSearchResponse> searchSocialrings(String keyWord, LocalDate socialringDate, String activityRegionName, int page, int size) {
+        Long activityRegionId = getActivityRegionIdByName(activityRegionName, BaseStatus.ACTIVE);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Object[]> results = socialringRepository.searchSocialringsWithMemberCount(
+                keyWord, socialringDate, activityRegionId, BaseStatus.ACTIVE, pageable
+        );
+        return results.map(result -> {
+            Socialring socialring = (Socialring) result[0];
+            long memberCount = (Long) result[1];
+            return new GetSocialringSearchResponse(
+                    socialring.getSocialringId(),
+                    socialring.getSocialringName(),
+                    socialring.getSocialringImg(),
+                    socialring.getTotalRecruits(),
+                    (int) memberCount,
+                    socialring.getSocialringDate(),
+                    socialring.getSocialringCost(),
+                    socialring.getCommentSimple(),
+                    socialring.getActivityRegion().getActivityRegionName()
+            );
+        });
+    }
+
+    /** 추후 삭제된것도 조회 가능하게 상태를 파라메터로 받기
+     *  재사용성 증가*/
+    private Long getActivityRegionIdByName(String name, BaseStatus status){
+        Long activityRegionId = null;
+        /** 이름으로 지역아이디 얻기 */
+        if (name != null) {
+            Optional<ActivityRegion> activityRegionOpt = activityRegionRepository.findByActivityRegionNameAndStatus(name, status);
+            if (activityRegionOpt.isPresent()) {
+                activityRegionId = activityRegionOpt.get().getActivityRegionId();
+            }
+        }
+        return activityRegionId;
+    }
+
+
 }

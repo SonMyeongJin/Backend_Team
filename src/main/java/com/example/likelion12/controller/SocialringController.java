@@ -7,8 +7,10 @@ import com.example.likelion12.service.SocialringService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -75,7 +77,7 @@ public class SocialringController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(socialringService.joinBeforeSocialring(memberId));
     }
-   /**
+    /**
      * 소셜링 삭제하기
      */
     @PatchMapping("/delete")
@@ -85,5 +87,20 @@ public class SocialringController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         socialringService.deleteSocialring(memberId, socialringId);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
+    }
+
+    /**
+     * 소셜링 검색하기
+     */
+    @GetMapping("/search")
+    public BaseResponse<Page<GetSocialringSearchResponse>> searchSocialrings(
+            @RequestHeader("Authorization") String authorization,
+            @RequestParam(required = false) String keyWord,
+            @RequestParam(required = false) LocalDate socialringDate,
+            @RequestParam(required = false) String activityRegionName,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Page<GetSocialringSearchResponse> responses = socialringService.searchSocialrings(keyWord, socialringDate, activityRegionName, page, 9);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, responses);
     }
 }
