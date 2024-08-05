@@ -6,6 +6,7 @@ import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -100,6 +101,19 @@ public class CrewController {
     }
 
     /**
+     * 크루 검색
+     */
+    @GetMapping("/search")
+    public BaseResponse<Page<GetCrewSearchResponse>> searchCrews(
+            @RequestParam(required = false) String keyWord,
+            @RequestParam(required = false) String activityRegionName,
+            @RequestParam(required = false) String exerciseName,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        Page<GetCrewSearchResponse> responses = crewService.searchCrews(keyWord, activityRegionName, exerciseName,page, 9);
+        return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, responses);
+    }
+  /**
      * 참여중인 크루 조회
      */
     @GetMapping("/join")

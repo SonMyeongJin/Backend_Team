@@ -11,6 +11,8 @@ import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
@@ -374,5 +377,53 @@ public class CrewService {
 
         // 반환하기
         return joinCrewResponses;
+    }
+
+    /**
+     * 크루 검색
+     */
+    public Page<GetCrewSearchResponse> searchCrews(String keyWord, String activityRegionName, String exerciseName, int page, int size) {
+        Long activityRegionId = getActivityRegionIdByName(activityRegionName, BaseStatus.ACTIVE);
+        Long exerciseId = getActivityExerciseIdByName(exerciseName, BaseStatus.ACTIVE);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Crew> results = crewRepository.searchCrew(
+                keyWord, exerciseId, activityRegionId, BaseStatus.ACTIVE, pageable
+        );
+        return results.map(crew -> {
+            return new GetCrewSearchResponse(
+                    crew.getCrewId(),
+                    crew.getCrewName(),
+                    crew.getCrewImg(),
+                    crew.getActivityRegion().getActivityRegionName(),
+                    crew.getCommentSimple(),
+                    crew.getLevel(),
+                    crew.getExercise().getExerciseName()
+            );
+        });
+    }
+
+    private Long getActivityRegionIdByName(String name, BaseStatus status){
+        Long activityRegionId = null;
+        /** 이름으로 지역아이디 얻기 */
+        if (name != null) {
+            Optional<ActivityRegion> activityRegionOpt = activityRegionRepository.findByActivityRegionNameAndStatus(name, status);
+            if (activityRegionOpt.isPresent()) {
+                activityRegionId = activityRegionOpt.get().getActivityRegionId();
+            }
+        }
+        return activityRegionId;
+    }
+
+    private Long getActivityExerciseIdByName(String name, BaseStatus status){
+        Long ExerciseId = null;
+        /** 이름으로 활동아이디 얻기 */
+        if (name != null) {
+            Optional<Exercise> activityRegionOpt = exerciseRepository.findByExerciseNameAndStatus(name, status);
+            if (activityRegionOpt.isPresent()) {
+                ExerciseId = activityRegionOpt.get().getExerciseId();
+            }
+        }
+        return ExerciseId;
     }
 }
