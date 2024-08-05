@@ -1,7 +1,6 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
-import com.example.likelion12.dto.SearchRequest;
 import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
 import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
@@ -39,10 +38,10 @@ public class CrewController {
      */
     @GetMapping("/inquiry")
     public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestHeader("Authorization") String authorization,
-                                                                       @RequestBody SearchRequest searchRequest){
+                                                                       @RequestParam int page){
         log.info("[CrewController.getCrewInquiries]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getCrewInquiries(memberId,searchRequest));
+        return new BaseResponse<>(crewService.getCrewInquiries(memberId,page));
     }
 
 

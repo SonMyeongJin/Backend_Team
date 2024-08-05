@@ -5,7 +5,6 @@ import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
-import com.example.likelion12.dto.SearchRequest;
 import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -77,14 +76,14 @@ public class CrewService {
     /**
      * 크루  조회
      */
-    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, SearchRequest searchRequest) {
+    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, int page) {
         log.info("[CrewService.getCrewInquiries]");
 
         List<Crew> allCrews = crewRepository.findAllByStatus(BaseStatus.ACTIVE);
         List<GetCrewInquiryResponse> getCrewInquiryResponses = new ArrayList<>();
 
         // offset과 limit 계산
-        int offset = searchRequest.getOffset();
+        int offset = (page - 1) * 9;
         int recordSize = 9 ;
 
         // 페이징 처리된 크루 목록 생성
