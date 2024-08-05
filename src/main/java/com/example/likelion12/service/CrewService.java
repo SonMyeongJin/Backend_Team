@@ -268,7 +268,10 @@ public class CrewService {
                     return new GetJoinCrewResponse(
                             crew.getCrewName(),
                             crew.getCrewImg(),
-                            crew.getCommentSimple()
+                            crew.getCommentSimple(),
+                            crew.getActivityRegion().getActivityRegionName(),
+                            crew.getExercise().getExerciseName(),
+                            crew.getLevel()
                     );
                 })
                 .collect(Collectors.toList());
