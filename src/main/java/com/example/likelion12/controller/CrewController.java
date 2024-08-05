@@ -1,6 +1,7 @@
 package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
+import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
 import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.service.CrewService;
 import com.example.likelion12.util.*;
