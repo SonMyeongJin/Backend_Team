@@ -99,4 +99,14 @@ public class CrewController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 참여중인 크루 조회
+     */
+    @GetMapping("/join")
+    public BaseResponse<List<GetJoinCrewResponse>> getJoinCrew(@RequestHeader("Authorization") String authorization) {
+        log.info("[CrewController.getJoinCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        List<GetJoinCrewResponse> joinCrewResponses = crewService.getJoinCrew(memberId);
+        return new BaseResponse<>(joinCrewResponses);
+    }
 }

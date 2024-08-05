@@ -1,9 +1,11 @@
 package com.example.likelion12.service;
 
 import com.example.likelion12.common.exception.*;
+import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
+import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.*;
 import com.example.likelion12.repository.*;
@@ -313,22 +315,60 @@ public class CrewService {
 
         // 크루를 탈퇴하고자 하는  member
         Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
-                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         //탈퇴하고자 하는 크루
         Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
-                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
+                .orElseThrow(() -> new CrewException(CANNOT_FOUND_CREW));
 
         //탈퇴하고자 하는 크루의 멤버크루
         //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crewId, BaseStatus.ACTIVE)
-                .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crewId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberCrewException(NOT_CREW_MEMBERCREW));
 
-        //CAPTAIN일 경우 크루 삭제
-        if(memberCrewService.ConfirmCaptainMemberCrew(memberCrew))
-            deleteCrew(memberId,crewId);
-        else //크루 탈퇴
-        memberCrewRepository.delete(memberCrew);
+        //CAPTAIN일 경우 예외처리 --> 크루삭제
+        if (BaseRole.CAPTAIN.equals(memberCrew.getRole())){
+            throw new MemberCrewException(CANNOT_CREW_CANCEL);
+        }
+        //크루 탈퇴
+        else {
+            //멤버크루 삭제
+            memberCrew.DeleteMemberCrewInfo(BaseStatus.DELETE);
+            memberCrewRepository.save(memberCrew);
+       }
 
+    }
+
+    /**
+     * 참여중인 크루 조회하기
+     */
+    @Transactional
+    public List<GetJoinCrewResponse> getJoinCrew(Long memberId) {
+        log.info("[CrewService.getJoinCrew]");
+
+        // 멤버Id로 멤버찾고
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+
+        // 멤버가 가지고 있는 멤버크루를 리스트로 가져오고
+        List<MemberCrew> memberCrewList = member.getMemberCrewList();
+
+        // 그 멤버크루로 속해있는 크루들을 가져와서 필요한 정보만 dto에 담고
+        List<GetJoinCrewResponse> joinCrewResponses = memberCrewList.stream()
+                .map(memberCrew -> {
+                    Crew crew = memberCrew.getCrew();
+                    return new GetJoinCrewResponse(
+                            crew.getCrewName(),
+                            crew.getCrewImg(),
+                            crew.getCommentSimple(),
+                            crew.getActivityRegion().getActivityRegionName(),
+                            crew.getExercise().getExerciseName(),
+                            crew.getLevel()
+                    );
+                })
+                .collect(Collectors.toList());
+
+        // 반환하기
+        return joinCrewResponses;
     }
 }
