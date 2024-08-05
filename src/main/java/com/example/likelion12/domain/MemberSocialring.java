@@ -45,4 +45,13 @@ public class MemberSocialring extends BaseTime {
         this.member = member;
         this.status = baseStatus;
     }
+
+    // 상태를 'delete'로 변경하는 메서드
+    public void setStatusToDelete() {
+        this.status = BaseStatus.DELETE;
+    }
+
+    public void setStatus(BaseStatus status) {
+        this.status = status;
+    }
 }
