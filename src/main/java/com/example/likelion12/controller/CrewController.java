@@ -2,6 +2,7 @@ package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.GetJoinCrewResponse;
 import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
@@ -91,4 +92,14 @@ public class CrewController {
         return new BaseResponse<>(null);
     }
 
+    /**
+     * 참여중인 크루 조회
+     */
+    @GetMapping("/join")
+    public BaseResponse<List<GetJoinCrewResponse>> getJoinCrew(@RequestHeader("Authorization") String authorization) {
+        log.info("[CrewController.getJoinCrew]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        List<GetJoinCrewResponse> joinCrewResponses = crewService.getJoinCrew(memberId);
+        return new BaseResponse<>(joinCrewResponses);
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.likelion12.service;
 
 import com.example.likelion12.common.exception.*;
+import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
@@ -8,6 +9,7 @@ import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
 import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
+import com.example.likelion12.dto.crew.GetJoinCrewResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.repository.*;
@@ -249,5 +251,38 @@ public class CrewService {
             memberCrewRepository.save(memberCrew);
        }
 
+    }
+
+    /**
+     * 참여중인 크루 조회하기
+     */
+    @Transactional
+    public List<GetJoinCrewResponse> getJoinCrew(Long memberId) {
+        log.info("[CrewService.getJoinCrew]");
+
+        // 멤버Id로 멤버찾고
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
+
+        // 멤버가 가지고 있는 멤버크루를 리스트로 가져오고
+        List<MemberCrew> memberCrewList = member.getMemberCrewList();
+
+        // 그 멤버크루로 속해있는 크루들을 가져와서 필요한 정보만 dto에 담고
+        List<GetJoinCrewResponse> joinCrewResponses = memberCrewList.stream()
+                .map(memberCrew -> {
+                    Crew crew = memberCrew.getCrew();
+                    return new GetJoinCrewResponse(
+                            crew.getCrewName(),
+                            crew.getCrewImg(),
+                            crew.getCommentSimple(),
+                            crew.getActivityRegion().getActivityRegionName(),
+                            crew.getExercise().getExerciseName(),
+                            crew.getLevel()
+                    );
+                })
+                .collect(Collectors.toList());
+
+        // 반환하기
+        return joinCrewResponses;
     }
 }
