@@ -72,10 +72,10 @@ public class CrewController {
      */
     @PatchMapping("/delete")
     public BaseResponse<Void> deleteCrew(@RequestHeader("Authorization") String authorization,
-                                         @RequestParam Long crewId){
+                                         @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.deleteCrew(memberId,crewId);
+        crewService.deleteCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 
@@ -84,10 +84,10 @@ public class CrewController {
      */
     @PatchMapping("/cancel")
     public BaseResponse<Void> cancelCrew(@RequestHeader("Authorization") String authorization,
-                                         @RequestParam Long crewId){
+                                         @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        crewService.cancelCrew(memberId,crewId);
+        crewService.cancelCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
 

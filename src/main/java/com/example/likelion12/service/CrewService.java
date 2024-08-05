@@ -186,7 +186,7 @@ public class CrewService {
      * 크루 삭제하기
      */
     @Transactional
-    public void deleteCrew(Long memberId, Long crewId) {
+    public void deleteCrew(Long memberId, String crewName) {
         log.info("[CrewService.deleteCrew]");
 
         // 크루를 삭제하고자 하는  member
@@ -194,19 +194,19 @@ public class CrewService {
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         //삭제하고자 하는 크루
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
 
         //삭제하고자 하는 크루의 멤버크루
         //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crewId, BaseStatus.ACTIVE)
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
 
         //멤버가 CAPTAIN 권한인지 유효성 검사
         memberCrewService.ConfirmCaptainMemberCrew(memberCrew);
 
         //삭제하고자 하는 크루의 멤버크루리스트
-        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()->new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
 
         // 멤버 크루리스트 삭제
@@ -222,8 +222,10 @@ public class CrewService {
     /**
      * 크루 탈퇴하기
      */
+    //크루 탈퇴하기 부분 아직 머지안된거라서 크루 탈퇴하기 머지할때 NAME으로 다시바꿔야함
+    //컨트롤러는 develop으로 받고 서비스는 머지된거에서 NAME으로 변경해야함
     @Transactional
-    public void cancelCrew(Long memberId, Long crewId) {
+    public void cancelCrew(Long memberId, String crewName) {
         log.info("[CrewService.cancelCrew]");
 
         // 크루를 탈퇴하고자 하는  member
@@ -231,17 +233,17 @@ public class CrewService {
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         //탈퇴하고자 하는 크루
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
 
         //탈퇴하고자 하는 크루의 멤버크루
         //해당크루와 관계없음(해당크루에 등록되있지 않음), 멤버크루가 존재하지않음
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crewId, BaseStatus.ACTIVE)
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus( memberId, crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()->new MemberCrewException(NOT_CREW_MEMBERCREW));
 
         //CAPTAIN일 경우 크루 삭제
         if(memberCrewService.ConfirmCaptainMemberCrew(memberCrew))
-            deleteCrew(memberId,crewId);
+            deleteCrew(memberId,crewName);
         else //크루 탈퇴
         memberCrewRepository.delete(memberCrew);
 
