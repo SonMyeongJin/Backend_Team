@@ -115,10 +115,10 @@ public class SocialringController {
      */
     @PatchMapping("/cancel")
     public BaseResponse<Void> cancelSocialring(@RequestHeader("Authorization") String authorization,
-                                               @RequestParam("socialringId") Long socialringId) {
+                                               @RequestParam("socialringName") String socialringName) {
         log.info("[SocialringController.cancelSocialring]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        socialringService.cancelSocialring(memberId, socialringId);
+        socialringService.cancelSocialring(memberId, socialringName);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
 
