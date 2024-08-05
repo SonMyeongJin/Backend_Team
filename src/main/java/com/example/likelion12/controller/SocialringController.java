@@ -2,6 +2,7 @@ package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.common.response.status.BaseExceptionResponseStatus;
+import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.service.SocialringService;
 import com.example.likelion12.util.*;
@@ -66,6 +67,17 @@ public class SocialringController {
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
 
+    /**
+     * 소셜링 검색결과 필터링
+     */
+    @GetMapping("/search/filter")
+    public BaseResponse<List<GetSocialringSearchFilterResponse>> searchFilterSocialring(@RequestHeader("Authorization") String authorization,
+                                                                                        @RequestBody GetSocialringSearchFilterRequest getSocialringSearchFilterRequest){
+        log.info("[SocialringController.searchFilterSocialring]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(socialringService.searchFilterSocialring(memberId, getSocialringSearchFilterRequest));
+    }
+  
     /**
      * 참가 예정인 소셜링
      */

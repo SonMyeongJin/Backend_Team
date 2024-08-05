@@ -23,4 +23,5 @@ public interface SocialringRepository extends JpaRepository<Socialring, Long> {
     @Query("SELECT c FROM Socialring c WHERE c.activityRegion.id = :activityRegionId AND c.status = :status ORDER BY c.socialringId ASC")
     List<Socialring> findTop3ByActivityRegionIdAndStatus(@Param("activityRegionId") Long activityRegionId, @Param("status") BaseStatus status, Pageable pageable);
 
+    List<Socialring> findAllByStatus(BaseStatus baseStatus);
 }
