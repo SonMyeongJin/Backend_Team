@@ -323,7 +323,6 @@ public class SocialringService {
     /**
      * 소셜링 검색
      */
-    @Transactional(readOnly = true) /** 클래스 선언부에 붙이면 떼어도되는 애노테이션! */
     public Page<GetSocialringSearchResponse> searchSocialrings(String keyWord, LocalDate socialringDate, String activityRegionName, int page, int size) {
         Long activityRegionId = getActivityRegionIdByName(activityRegionName, BaseStatus.ACTIVE);
 
@@ -348,8 +347,6 @@ public class SocialringService {
         });
     }
 
-    /** 추후 삭제된것도 조회 가능하게 상태를 파라메터로 받기
-     *  재사용성 증가*/
     private Long getActivityRegionIdByName(String name, BaseStatus status){
         Long activityRegionId = null;
         /** 이름으로 지역아이디 얻기 */
