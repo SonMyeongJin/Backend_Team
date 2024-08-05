@@ -2,20 +2,15 @@ package com.example.likelion12.dto.socialring;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import com.example.likelion12.domain.base.BaseGender;
-import com.example.likelion12.domain.base.BaseLevel;
-import com.example.likelion12.domain.base.BaseRole;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
-public class GetSocialringSearchFilterResponse {
+public class GetSocialringJoinStatusResponse {
 
     /**
-     * 소셜링 검색결과필터링 response dto
+     * 소셜링 참여상태 response dto
      */
     private Long socialringId;
     private String socialringName;

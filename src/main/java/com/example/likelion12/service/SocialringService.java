@@ -4,6 +4,7 @@ import com.example.likelion12.common.exception.*;
 import com.example.likelion12.domain.*;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
+import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.repository.*;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.*;
+import static com.example.likelion12.domain.base.BaseStatus.DELETE;
 
 @Slf4j
 @Service
@@ -228,6 +230,111 @@ public class SocialringService {
     }
 
     /**
+     * 참가 예정인 소셜링
+     */
+    @Transactional
+    public List<GetSocialringJoinStatusResponse> joinBeforeSocialring(Long memberId) {
+        log.info("[SocialringService.joinBeforeSocialring]");
+
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+
+        //현재 날짜
+        LocalDate nowDate = LocalDate.now();
+
+        // 멤버의 멤버소셜링리스트 추출
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findByMember_MemberIdAndAndStatus(memberId,BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+
+        // 참가중인 소셜링이 없을때 예외처리
+        if(memberSocialringList.isEmpty())
+            throw new MemberSocialringException(N0T_EXIST_JOIN_SOCIALRING);
+
+        // 멤버가 참여한 멤버소셜링 리스트 중에서 현재 날짜보다 더 나중인 소셜링을 추출
+        List<Socialring> memberInjoinBeforeSocialrings = new ArrayList<>();
+        for(MemberSocialring memberSocialring : memberSocialringList ){
+            LocalDate socialringDate = memberSocialring.getSocialring().getSocialringDate();
+            if(socialringDate.isAfter(nowDate)){
+                memberInjoinBeforeSocialrings.add(memberSocialring.getSocialring());
+            }
+        }
+
+        //참가 예정인 소셜링이 존재하지않을떄 예외처리
+        if(memberInjoinBeforeSocialrings.isEmpty())
+            throw new MemberSocialringException(N0T_EXIST_JOIN_BEFORE_SOCIALRING);
+
+        List<GetSocialringJoinStatusResponse> responseList = new ArrayList<>();
+        for(Socialring socialring : memberInjoinBeforeSocialrings ){
+
+            // 현재 참여중인 소셜링원 수 확인하기
+            int currentSocialrings  = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
+                    .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
+
+            GetSocialringJoinStatusResponse response = new GetSocialringJoinStatusResponse(socialring.getSocialringId(),
+                    socialring.getSocialringName(),socialring.getSocialringImg(),socialring.getActivityRegion().getActivityRegionName(),
+                    socialring.getSocialringDate(),socialring.getSocialringCost(),socialring.getCommentSimple(),currentSocialrings,
+                    socialring.getTotalRecruits()
+                    );
+            responseList.add(response);
+        }
+
+        return responseList;
+
+    }
+
+    /**
+     * 참가 완료한 소셜링
+     */
+    @Transactional
+    public List<GetSocialringJoinStatusResponse> joinCompleteSocialring(Long memberId) {
+        log.info("[SocialringService.joinCompleteSocialring]");
+
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+
+        //현재 날짜
+        LocalDate nowDate = LocalDate.now();
+
+        // 멤버의 멤버소셜링리스트 추출
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findByMember_MemberIdAndAndStatus(memberId,BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+
+        // 참가중인 소셜링이 없을때 예외처리
+        if(memberSocialringList.isEmpty())
+            throw new MemberSocialringException(N0T_EXIST_JOIN_SOCIALRING);
+
+        // 멤버가 참여한 멤버소셜링 리스트 중에서 현재 날짜보다 더 전인 소셜링을 추출
+        List<Socialring> memberInjoinBeforeSocialrings = new ArrayList<>();
+        for(MemberSocialring memberSocialring : memberSocialringList ){
+            LocalDate socialringDate = memberSocialring.getSocialring().getSocialringDate();
+            if(socialringDate.isBefore(nowDate)){
+                memberInjoinBeforeSocialrings.add(memberSocialring.getSocialring());
+            }
+        }
+
+        //참가 예정인 소셜링이 존재하지않을떄 예외처리
+        if(memberInjoinBeforeSocialrings.isEmpty())
+            throw new MemberSocialringException(N0T_EXIST_JOIN_COMPLETE_SOCIALRING);
+
+        List<GetSocialringJoinStatusResponse> responseList = new ArrayList<>();
+        for(Socialring socialring : memberInjoinBeforeSocialrings ){
+
+            // 현재 참여중인 소셜링원 수 확인하기
+            int currentSocialrings  = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
+                    .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
+
+            GetSocialringJoinStatusResponse response = new GetSocialringJoinStatusResponse(socialring.getSocialringId(),
+                    socialring.getSocialringName(),socialring.getSocialringImg(),socialring.getActivityRegion().getActivityRegionName(),
+                    socialring.getSocialringDate(),socialring.getSocialringCost(),socialring.getCommentSimple(),currentSocialrings,
+                    socialring.getTotalRecruits()
+            );
+            responseList.add(response);
+        }
+
+        return responseList;
+    }
+  
+    /**
      * 소셜링 검색결과 필터링
      */
     @Transactional
@@ -298,11 +405,18 @@ public class SocialringService {
                     matchesCriteria = false;
                 }
             }
+          
+            // 현재 참여중인 소셜링원 수 확인하기
+            int currentSocialrings = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
+                    .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST)).size();
 
             // 조건에 맞으면 응답 리스트에 추가
             if (matchesCriteria) {
                 GetSocialringSearchFilterResponse response =
-                        new GetSocialringSearchFilterResponse(socialring.getSocialringId());
+                        new GetSocialringSearchFilterResponse(socialring.getSocialringId(),
+                                socialring.getSocialringName(),socialring.getSocialringImg(),
+                                socialring.getActivityRegion().getActivityRegionName(),socialring.getSocialringDate(),
+                                socialring.getSocialringCost(),socialring.getCommentSimple(),currentSocialrings,socialring.getTotalRecruits());
                 responseList.add(response);
             }
         }
@@ -314,4 +428,74 @@ public class SocialringService {
 
         return responseList;
     }
+  
+     /**
+     * 소셜링 삭제하기
+     */
+    @Transactional
+    public void deleteSocialring(Long memberId, Long socialringId) {
+        log.info("[SocialringService.deleteSocialring]");
+
+        // 소셜링을 삭제하고자 하는 멤버를 찾기
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+
+        // 삭제하고자 하는 소셜링이 존재하는지 확인
+        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
+
+        // 소셜링을 삭제하고자 하는 멤버의 멤버소셜링을 찾기
+        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId, socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+
+        // 접근 멤버가 CAPTAIN인지 유효성 검사
+        memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);
+
+        // 소셜링 상태를 DELETE로 변경
+        socialring.setStatus(DELETE);
+        socialringRepository.save(socialring);
+
+        // 소설링이 참조하고 있는 멤버 소셜링의 상태를 전부 DELETE로 변경
+            // 소셜링에 등록된 멤버 리스트 추출
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
+                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+            // 해당 리스트의 멤버의 상태를 DELETE로 변경
+        for (MemberSocialring memberSocialringEntry : memberSocialringList) {
+            memberSocialringEntry.setStatus(DELETE);
+            memberSocialringRepository.save(memberSocialringEntry);
+        }
+    }
+
+    /**
+     * 소셜링 취소
+     */
+    @Transactional
+    public void cancelSocialring(Long memberId, Long socialringId) {
+        log.info("[SocialringService.cancelSocialring]");
+
+        // 소셜링을 취소하고자 하는 멤버 찾고
+        Member member = memberRepository.findByMemberIdAndStatus(memberId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
+
+        // 취소하고자 하는 소셜링 찾고
+        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+                .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
+
+        // 해당 소셜링에 등록된 멤버 소셜링 중, 취소할 멤버의 멤버소셜링 값을 가져와서
+        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,
+                socialringId, BaseStatus.ACTIVE).orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
+
+        // 가져온 멤버 소셜링의 값으로 캡틴인지 확인하고
+        memberSocialringService.ConfirmCaptainMemberSocialring(memberSocialring);
+
+        // 캡틴인 경우 예외 발생
+        if (memberSocialring.getRole() == BaseRole.CAPTAIN) {
+            throw new MemberSocialringException(CANNOT_CANCEL_BY_CAPTAIN);
+        }
+
+        // 캡틴이 아닌경우 정상적으로 상태를 DELETE로 변경
+        memberSocialring.setStatusToDelete();
+        memberSocialringRepository.save(memberSocialring);
+    }
+
 }

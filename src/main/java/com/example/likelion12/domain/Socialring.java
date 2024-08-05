@@ -5,6 +5,7 @@ import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseStatus;
 import com.example.likelion12.domain.base.BaseTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -113,5 +114,9 @@ public class Socialring extends BaseTime {
         this.facility = facility;
         this.exercise = exercise;
 
+    }
+
+    public void setStatus(BaseStatus status) {
+        this.status = status;
     }
 }
