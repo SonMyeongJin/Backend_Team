@@ -14,9 +14,9 @@ public class PostCrewRequest {
      */
     private String crewName;
     private MultipartFile crewImg;
-    private Long activityRegionId;
-    private Long facilityId;
-    private Long exerciseId;
+    private String activityRegionName;
+    private String facilityName;
+    private String exerciseName;
     private int totalRecruits;
     private int crewCost;
     private String simpleComment;

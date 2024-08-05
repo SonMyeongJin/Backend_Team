@@ -49,9 +49,9 @@ public class CrewService {
                 .orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         String crewName = postCrewRequest.getCrewName();
-        Long activityRegionId = postCrewRequest.getActivityRegionId();
-        Long facilityId = postCrewRequest.getFacilityId();
-        Long exerciseId = postCrewRequest.getExerciseId();
+        String activityRegionName = postCrewRequest.getActivityRegionName();
+        String facilityName = postCrewRequest.getFacilityName();
+        String exerciseName = postCrewRequest.getExerciseName();
         int totalRecruits = postCrewRequest.getTotalRecruits();
         int crewCost = postCrewRequest.getCrewCost();
         String simpleComment = postCrewRequest.getSimpleComment();
@@ -59,13 +59,13 @@ public class CrewService {
         BaseGender gender = postCrewRequest.getGender();
         BaseLevel level = postCrewRequest.getLevel();
 
-        ActivityRegion activityRegion = activityRegionRepository.findByActivityRegionIdAndStatus(activityRegionId, BaseStatus.ACTIVE)
+        ActivityRegion activityRegion = activityRegionRepository.findByActivityRegionNameAndStatus(activityRegionName, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new ActivityRegionException(CANNOT_FOUND_ACTIVITYREGION));
 
-        Facility facility = facilityRepository.findByFacilityIdAndStatus(facilityId, BaseStatus.ACTIVE)
+        Facility facility = facilityRepository.findByFacilityNameAndStatus(facilityName, BaseStatus.ACTIVE)
                 .orElseThrow(()-> new FacilityException(CANOOT_FOUND_FACILITY));
 
-        Exercise exercise = exerciseRepository.findByExerciseIdAndStatus(exerciseId,BaseStatus.ACTIVE)
+        Exercise exercise = exerciseRepository.findByExerciseNameAndStatus(exerciseName,BaseStatus.ACTIVE)
                 .orElseThrow(()-> new ExerciseException(CANNOT_FOUND_EXERCISE));
 
         String crewImg = s3Uploader.uploadFileToS3(postCrewRequest.getCrewImg(),"crew/");
