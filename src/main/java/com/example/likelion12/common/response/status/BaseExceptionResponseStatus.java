@@ -47,6 +47,10 @@ public enum BaseExceptionResponseStatus implements ResponseStatus{
     NOT_MEMBERSOCIALRING_CAPTAIN(8001, HttpStatus.BAD_REQUEST.value(), "소셜링 수정,삭제에 접근할수없는 권한입니다."),
     CANNOT_FOUND_MEMBERSOCIALRING_LIST(8002, HttpStatus.BAD_REQUEST.value(), "해당하는 멤버소셜링 리스트를 찾을 수 없습니다."),
     ALREADY_EXIST_IN_SOCIALRING(8003, HttpStatus.BAD_REQUEST.value(), "해당 소셜링에 이미 등록된 멤버입니다."),
+    N0T_EXIST_JOIN_SOCIALRING(8004, HttpStatus.BAD_REQUEST.value(), "참가 중인 소셜링이 존재하지 않습니다."),
+    N0T_EXIST_JOIN_BEFORE_SOCIALRING(8005, HttpStatus.BAD_REQUEST.value(), "참가 예정인 소셜링이 존재 하지않습니다."),
+    N0T_EXIST_JOIN_COMPLETE_SOCIALRING(8006, HttpStatus.BAD_REQUEST.value(), "참가 완료한 소셜링이 존재 하지않습니다."),
+    CANNOT_CANCEL_BY_CAPTAIN(8007, HttpStatus.BAD_REQUEST.value(), "소셜링 모임장은 소셜링을 나갈 수 없습니다. 소셜링 삭제를 이용해주세요"),
 
     /**
      * 9000 : crew 관련

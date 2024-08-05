@@ -2,6 +2,7 @@ package com.example.likelion12.controller;
 
 import com.example.likelion12.common.response.BaseResponse;
 import com.example.likelion12.dto.crew.GetCrewDetailResponse;
+import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.crew.PostCrewRequest;
 import com.example.likelion12.dto.crew.PostCrewResponse;
 import com.example.likelion12.service.CrewService;
@@ -9,6 +10,8 @@ import com.example.likelion12.util.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -29,6 +32,17 @@ public class CrewController {
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
         return new BaseResponse<>(crewService.createCrew(memberId, postCrewRequest));
     }
+    /**
+     * 크루 조회
+     */
+    @GetMapping("/inquiry")
+    public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestHeader("Authorization") String authorization,
+                                                                     @RequestParam List<Long> crewId){
+        log.info("[CrewController.getCrewInquiries]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(crewService.getCrewInquiries(memberId, crewId));
+    }
+
 
     /**
      * 크루 상세 조회
