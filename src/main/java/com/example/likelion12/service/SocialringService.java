@@ -196,7 +196,7 @@ public class SocialringService {
      * 소셜링 참여하기
      */
     @Transactional
-    public void joinSocialring(Long memberId, Long socialringId) {
+    public void joinSocialring(Long memberId, String socialringName) {
         log.info("[SocialringService.joinSocialring]");
 
         //소셜링을 참여하고자 하는 멤버
@@ -204,11 +204,11 @@ public class SocialringService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         //참여하고자 하는 소셜링
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         //해당 소셜링에 이미 등록되어있다면 예외처리
-        if(memberSocialringRepository.existsByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,socialringId,BaseStatus.ACTIVE)){
+        if(memberSocialringRepository.existsByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId,socialring.getSocialringId(),BaseStatus.ACTIVE)){
             throw new MemberSocialringException(ALREADY_EXIST_IN_SOCIALRING);
         }
 
@@ -216,7 +216,7 @@ public class SocialringService {
         int totalRecruits = socialring.getTotalRecruits();
 
         // 현재 참여중인 소셜링원 수 확인하기
-        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialringId,BaseStatus.ACTIVE)
+        List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus(socialring.getSocialringId(),BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING_LIST));
         int currentSocialrings = memberSocialringList.size();
 

@@ -60,10 +60,10 @@ public class SocialringController {
      * 소셜링 참여하기
      */
     @PostMapping("/join")
-    public BaseResponse<Void> joinSocialring(@RequestHeader("Authorization") String authorization,@RequestParam Long socialringId){
+    public BaseResponse<Void> joinSocialring(@RequestHeader("Authorization") String authorization,@RequestParam String socialringName){
         log.info("[SocialringController.joinSocialring]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        socialringService.joinSocialring(memberId, socialringId);
+        socialringService.joinSocialring(memberId, socialringName);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
 
