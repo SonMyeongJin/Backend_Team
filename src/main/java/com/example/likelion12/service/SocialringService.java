@@ -498,4 +498,13 @@ public class SocialringService {
         memberSocialringRepository.save(memberSocialring);
     }
 
+    /**
+     * 소셜링 조회
+     */
+    @Transactional
+    public void getSocialring(Long memberId, Long socialriongId) {
+
+        // 멤버
+
+    }
 }
