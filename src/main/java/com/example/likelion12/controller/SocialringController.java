@@ -103,10 +103,10 @@ public class SocialringController {
      */
     @PatchMapping("/delete")
     public BaseResponse<Void> deleteSocialring(@RequestHeader("Authorization") String authorization,
-                                               @RequestParam("socialringId") Long socialringId) {
+                                               @RequestParam("socialringName") String socialringName) {
         log.info("[SocialringController.deleteSocialring]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        socialringService.deleteSocialring(memberId, socialringId);
+        socialringService.deleteSocialring(memberId, socialringName);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
 

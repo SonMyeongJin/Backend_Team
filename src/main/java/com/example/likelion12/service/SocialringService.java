@@ -433,7 +433,7 @@ public class SocialringService {
      * 소셜링 삭제하기
      */
     @Transactional
-    public void deleteSocialring(Long memberId, Long socialringId) {
+    public void deleteSocialring(Long memberId, String socialringName) {
         log.info("[SocialringService.deleteSocialring]");
 
         // 소셜링을 삭제하고자 하는 멤버를 찾기
@@ -441,11 +441,11 @@ public class SocialringService {
                 .orElseThrow(() -> new MemberException(CANNOT_FOUND_MEMBER));
 
         // 삭제하고자 하는 소셜링이 존재하는지 확인
-        Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+        Socialring socialring = socialringRepository.findBySocialringNameAndStatus(socialringName, BaseStatus.ACTIVE)
                 .orElseThrow(() -> new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         // 소셜링을 삭제하고자 하는 멤버의 멤버소셜링을 찾기
-        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId, socialringId, BaseStatus.ACTIVE)
+        MemberSocialring memberSocialring = memberSocialringRepository.findByMember_MemberIdAndSocialring_SocialringIdAndStatus(memberId, socialring.getSocialringId(), BaseStatus.ACTIVE)
                 .orElseThrow(() -> new MemberSocialringException(CANNOT_FOUND_MEMBERSOCIALRING));
 
         // 접근 멤버가 CAPTAIN인지 유효성 검사
@@ -458,7 +458,7 @@ public class SocialringService {
         // 소설링이 참조하고 있는 멤버 소셜링의 상태를 전부 DELETE로 변경
             // 소셜링에 등록된 멤버 리스트 추출
         List<MemberSocialring> memberSocialringList = memberSocialringRepository.findBySocialring_SocialringIdAndStatus
-                (socialringId, BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
+                (socialring.getSocialringId(), BaseStatus.ACTIVE).orElseThrow(()-> new MemberSocialringException( CANNOT_FOUND_MEMBERSOCIALRING_LIST));
             // 해당 리스트의 멤버의 상태를 DELETE로 변경
         for (MemberSocialring memberSocialringEntry : memberSocialringList) {
             memberSocialringEntry.setStatus(DELETE);
