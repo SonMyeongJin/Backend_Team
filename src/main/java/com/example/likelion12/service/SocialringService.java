@@ -86,7 +86,7 @@ public class SocialringService {
      * 소셜링 수정
      */
     @Transactional
-    public void modifySocialring(Long memberId, Long socialringId, PatchSocialringModifyRequest patchSocialringModifyRequest) throws IOException {
+    public void modifySocialring(Long memberId, String socialringName, PatchSocialringModifyRequest patchSocialringModifyRequest) throws IOException {
 
         log.info("[SocialringService.modifySocialring]");
 

@@ -38,7 +38,7 @@ public class SocialringController {
      * 소셜링 수정
      */
     @PatchMapping("")
-    public BaseResponse<Void> modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam long socialringId,
+    public BaseResponse<Void> modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam String socialringName,
                                                                  @RequestBody PatchSocialringModifyRequest patchSocialringModifyRequest) throws IOException {
 
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
