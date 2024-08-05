@@ -17,6 +17,7 @@ public interface CrewRepository extends JpaRepository<Crew, Long> {
     Optional<List<Crew>> findTop4ByMemberCrewListSize();
 
     Optional<Crew> findByCrewIdAndStatus(Long crewId, BaseStatus status);
+    Optional<Crew> findByCrewNameAndStatus(String crewName, BaseStatus status);
 
     // 특정 exercise_id 값을 가진 상위 3개의 Crew를 반환하는 쿼리
     @Query("SELECT c FROM Crew c WHERE c.exercise.id = :exerciseId AND c.status = :status ORDER BY c.crewId ASC")

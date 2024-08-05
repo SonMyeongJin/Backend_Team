@@ -108,16 +108,16 @@ public class CrewService {
     /**
      * 크루 상세 조회
      */
-    public GetCrewDetailResponse getCrewDetail(Long memberId, Long crewId){
+    public GetCrewDetailResponse getCrewDetail(Long memberId, String crewName){
         log.info("[CrewService.getCrewDetail]");
 
-        Crew crew = crewRepository.findByCrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        Crew crew = crewRepository.findByCrewNameAndStatus(crewName, BaseStatus.ACTIVE)
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW));
-        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crewId, BaseStatus.ACTIVE)
+        MemberCrew memberCrew = memberCrewRepository.findByMember_MemberIdAndCrew_CrewIdAndStatus(memberId, crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()-> new CrewException(CANNOT_FOUND_MEMBERCREW));
 
         // 가입한 멤버 리스트 추출
-        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crewId, BaseStatus.ACTIVE)
+        List<MemberCrew> memberCrewList = memberCrewRepository.findByCrew_CrewIdAndStatus(crew.getCrewId(), BaseStatus.ACTIVE)
                 .orElseThrow(()-> new MemberCrewException(CANNOT_FOUND_MEMBERCREW_LIST));
         // 그 멤버 중에서 사진만 추출해서 반환
         List<GetCrewDetailResponse.Crews> memberImgList = memberCrewList.stream()

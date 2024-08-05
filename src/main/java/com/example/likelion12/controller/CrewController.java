@@ -49,10 +49,10 @@ public class CrewController {
      */
     @GetMapping("")
     public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
-                                                             @RequestParam Long crewId){
+                                                             @RequestParam String crewName){
         log.info("[CrewController.getCrewDetail]");
         Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewId));
+        return new BaseResponse<>(crewService.getCrewDetail(memberId, crewName));
     }
 
     /**
