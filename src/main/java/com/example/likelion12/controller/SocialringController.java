@@ -122,4 +122,14 @@ public class SocialringController {
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
 
+    /**
+     * 소셜링 조회
+     */
+    @GetMapping("/inquiry")
+    public BaseResponse<List<GetSocialringResponse>> getSocialringInquiries(@RequestHeader("Authorization") String authorization,
+                                                                       @RequestParam List<Long> socialringId){
+        log.info("[SocialringController.getSocialringInquiries]");
+        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(socialringService.getSocialringInquiries(memberId, socialringId));
+    }
 }

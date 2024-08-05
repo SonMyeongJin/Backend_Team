@@ -6,6 +6,7 @@ import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseRole;
 import com.example.likelion12.domain.base.BaseStatus;
+import com.example.likelion12.dto.crew.GetCrewInquiryResponse;
 import com.example.likelion12.dto.socialring.*;
 import com.example.likelion12.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -497,4 +498,32 @@ public class SocialringService {
         memberSocialringRepository.save(memberSocialring);
     }
 
+    /**
+     * 소셜링  조회
+     */
+    public List<GetSocialringResponse> getSocialringInquiries(Long memberId, List<Long> socialringIds) {
+        log.info("[SocialringService.getSocialringInquiries]");
+
+        List<GetSocialringResponse> getSocialringResponse = new ArrayList<>();
+
+        for (Long socialringId : socialringIds) {
+
+            //조회하고자 하는 소셜링
+            Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
+                    .orElseThrow(() -> new SocialringException((CANNOT_FOUND_SOCIALRING)));
+
+            GetSocialringResponse response = new GetSocialringResponse(
+                    socialring.getSocialringName(),
+                    socialring.getSocialringImg(),
+                    socialring.getActivityRegion().getActivityRegionName(),
+                    socialring.getExercise().getExerciseName(),
+                    socialring.getLevel(),
+                    socialring.getCommentSimple()
+            );
+
+            getSocialringResponse.add(response);
+        }
+
+        return getSocialringResponse;
+    }
 }
