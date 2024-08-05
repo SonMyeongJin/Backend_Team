@@ -1,5 +1,7 @@
 package com.example.likelion12.dto.socialring;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import com.example.likelion12.domain.base.BaseGender;
 import com.example.likelion12.domain.base.BaseLevel;
 import com.example.likelion12.domain.base.BaseRole;
