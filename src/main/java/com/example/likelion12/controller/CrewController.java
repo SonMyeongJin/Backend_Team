@@ -26,8 +26,7 @@ public class CrewController {
      * 크루 등록
      */
     @PostMapping("")
-    public BaseResponse<PostCrewResponse> createCrew(@RequestHeader("Authorization") String authorization,
-                                                     @ModelAttribute PostCrewRequest postCrewRequest) throws IOException {
+    public BaseResponse<PostCrewResponse> createCrew(@ModelAttribute PostCrewRequest postCrewRequest) throws IOException {
         log.info("[CrewController.createCrew]");
         Long memberId = 1007L;
         return new BaseResponse<>(crewService.createCrew(memberId, postCrewRequest));
@@ -37,8 +36,7 @@ public class CrewController {
      * 크루 조회
      */
     @GetMapping("/inquiry")
-    public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestHeader("Authorization") String authorization,
-                                                                       @RequestParam int page){
+    public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestParam int page){
         log.info("[CrewController.getCrewInquiries]");
         Long memberId = 1007L;
         return new BaseResponse<>(crewService.getCrewInquiries(1007,page));
@@ -49,7 +47,7 @@ public class CrewController {
      * 크루 상세 조회
      */
     @GetMapping("")
-    public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<GetCrewDetailResponse> getCrewDetail(
                                                              @RequestParam String crewName){
         log.info("[CrewController.getCrewDetail]");
         Long memberId = 1007L;
