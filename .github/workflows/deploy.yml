@@ -83,16 +83,24 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.WAS_PORT }}
           script: |
+            CONTAINER_NAME=${{secrets.MY_CONTAINER}}
+            IMAGE_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO_NAME }}"
+            
             echo "Checking Docker installation..."
-            CONTAINER_ID=$(sudo docker ps -q --filter ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO_NAME }})
+            CONTAINER_ID=$(sudo docker ps -q --filter name=$CONTAINER_NAME)
+            
             if [ ! -z "$CONTAINER_ID" ]; then
-              echo "Docker could not be found, installing Docker"
+              echo "Stopping and removing existing container..."
               sudo docker stop $CONTAINER_ID
               sudo docker rm $CONTAINER_ID
             fi
+            
             echo "Pulling Docker image..."
-            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO_NAME }}
-            sudo docker run -d -e PROFILE=${{ secrets.PROFILE }} \
+            sudo docker pull $IMAGE_NAME
+            
+            echo "Running new container..."
+            sudo docker run -d --name $CONTAINER_NAME \
+            -e PROFILE=${{ secrets.PROFILE }} \
             -e DB_PROD_HOST=${{ secrets.DB_PROD_HOST }} \
             -e DB_PROD_USERNAME=${{ secrets.DB_PROD_USERNAME }} \
             -e DB_PROD_PASSWD=${{ secrets.DB_PROD_PASSWD }} \
@@ -102,8 +110,10 @@ jobs:
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             -e AWS_REGION=ap-northeast-2 \
-            -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO_NAME }}
+            -p 8080:8080 $IMAGE_NAME
             
-            sudo docker logs $(sudo docker ps -q --filter ancestor=${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.DOCKER_HUB_REPO_NAME }})
-
+            echo "Docker logs:"
+            sudo docker logs $CONTAINER_NAME
+            
+            echo "Cleaning up unused images..."
             sudo docker image prune -f
