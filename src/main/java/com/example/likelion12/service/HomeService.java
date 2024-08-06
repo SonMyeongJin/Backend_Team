@@ -1,6 +1,7 @@
 package com.example.likelion12.service;
 
 import com.example.likelion12.common.exception.CrewException;
+import com.example.likelion12.common.exception.SocialringException;
 import com.example.likelion12.domain.Socialring;
 import com.example.likelion12.dto.Crew;
 import com.example.likelion12.dto.HomeResponse;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_CREW_LIST;
+import static com.example.likelion12.common.response.status.BaseExceptionResponseStatus.CANNOT_FOUND_SOCIALRING;
 
 @Slf4j
 @Service
@@ -34,7 +36,7 @@ public class HomeService {
         List<com.example.likelion12.domain.Crew> topCrews = crewRepository.findTop4ByMemberCrewListSize()
                 .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW_LIST));
         List<Socialring> topSocialrings = socialringRepository.findTop4ByOrderBySocialringDate()
-                .orElseThrow(()->new CrewException(CANNOT_FOUND_CREW_LIST));
+                .orElseThrow(()->new SocialringException(CANNOT_FOUND_SOCIALRING));
 
         // 소셜 DTO로 변환
         List<com.example.likelion12.dto.Socialring> deadline_imminent = topSocialrings.stream()

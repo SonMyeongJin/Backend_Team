@@ -549,7 +549,7 @@ public class SocialringService {
     /**
      * 소셜링  조회
      */
-    public List<GetSocialringResponse> getSocialringInquiries(Long memberId, List<Long> socialringIds) {
+    public List<GetSocialringResponse> getSocialringInquiries(int memberId, List<Long> socialringIds) {
         log.info("[SocialringService.getSocialringInquiries]");
 
         List<GetSocialringResponse> getSocialringResponse = new ArrayList<>();

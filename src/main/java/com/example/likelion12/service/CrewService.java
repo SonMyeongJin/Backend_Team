@@ -84,7 +84,7 @@ public class CrewService {
     /**
      * 크루  조회
      */
-    public List<GetCrewInquiryResponse> getCrewInquiries(Long memberId, int page) {
+    public List<GetCrewInquiryResponse> getCrewInquiries(int memberId, int page) {
         log.info("[CrewService.getCrewInquiries]");
 
         List<Crew> allCrews = crewRepository.findAllByStatus(BaseStatus.ACTIVE);
