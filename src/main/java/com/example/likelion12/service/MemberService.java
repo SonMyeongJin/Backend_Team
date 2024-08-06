@@ -70,7 +70,7 @@ public class MemberService {
         log.info("[MemberService.deleteMember] memberId: {}", memberId);
 
         // 회원을 찾고
-        Member member = memberRepository.findById(memberId).orElse(null);
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberException(CANNOT_FOUND_MEMBER));
 
         // 회원 상태를 Delete 변경하고
         member.setStatus(BaseStatus.DELETE);
