@@ -143,9 +143,9 @@ public class SocialringController {
      */
     @GetMapping("/inquiry")
     public BaseResponse<List<GetSocialringResponse>> getSocialringInquiries(
-                                                                       @RequestParam List<Long> socialringId){
+                                                                       @RequestParam int page){
         log.info("[SocialringController.getSocialringInquiries]");
         Long memberId = 1007L;
-        return new BaseResponse<>(socialringService.getSocialringInquiries(1007, socialringId));
+        return new BaseResponse<>(socialringService.getSocialringInquiries(1007, page));
     }
 }

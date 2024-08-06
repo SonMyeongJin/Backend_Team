@@ -549,7 +549,7 @@ public class SocialringService {
     /**
      * 소셜링  조회
      */
-    public List<GetSocialringResponse> getSocialringInquiries(Long memberId, int page) {
+    public List<GetSocialringResponse> getSocialringInquiries(int memberId, int page) {
         log.info("[SocialringService.getSocialringInquiries]");
 
         List<Socialring> allSocialrings = socialringRepository.findAllByStatus(BaseStatus.ACTIVE);
