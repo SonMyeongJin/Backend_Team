@@ -146,6 +146,6 @@ public class SocialringController {
                                                                        @RequestParam List<Long> socialringId){
         log.info("[SocialringController.getSocialringInquiries]");
         Long memberId = 1007L;
-        return new BaseResponse<>(socialringService.getSocialringInquiries(memberId, socialringId));
+        return new BaseResponse<>(socialringService.getSocialringInquiries(1007, socialringId));
     }
 }

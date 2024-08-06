@@ -41,7 +41,7 @@ public class CrewController {
                                                                        @RequestParam int page){
         log.info("[CrewController.getCrewInquiries]");
         Long memberId = 1007L;
-        return new BaseResponse<>(crewService.getCrewInquiries(memberId,page));
+        return new BaseResponse<>(crewService.getCrewInquiries(1007,page));
     }
 
 
