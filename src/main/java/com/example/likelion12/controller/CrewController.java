@@ -29,7 +29,7 @@ public class CrewController {
     public BaseResponse<PostCrewResponse> createCrew(@RequestHeader("Authorization") String authorization,
                                                      @ModelAttribute PostCrewRequest postCrewRequest) throws IOException {
         log.info("[CrewController.createCrew]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(crewService.createCrew(memberId, postCrewRequest));
     }
 
@@ -40,7 +40,7 @@ public class CrewController {
     public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestHeader("Authorization") String authorization,
                                                                        @RequestParam int page){
         log.info("[CrewController.getCrewInquiries]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(crewService.getCrewInquiries(memberId,page));
     }
 
@@ -52,7 +52,7 @@ public class CrewController {
     public BaseResponse<GetCrewDetailResponse> getCrewDetail(@RequestHeader("Authorization") String authorization,
                                                              @RequestParam String crewName){
         log.info("[CrewController.getCrewDetail]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(crewService.getCrewDetail(memberId, crewName));
     }
 
@@ -60,10 +60,10 @@ public class CrewController {
      * 크루 참여하기
      */
     @PostMapping("/join")
-    public BaseResponse<Void> joinCrew(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<Void> joinCrew(
                                                         @RequestParam String crewName){
         log.info("[CrewController.joinCrew]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         crewService.joinCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
@@ -72,10 +72,10 @@ public class CrewController {
      * 크루 검색결과 필터링
      */
     @GetMapping("/search/filter")
-    public BaseResponse<List<GetCrewSearchFilterResponse>> searchFilterCrew(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<List<GetCrewSearchFilterResponse>> searchFilterCrew(
                                                                             @RequestBody GetCrewSearchFilterRequest getCrewSearchFilterRequest) {
         log.info("[CrewController.searchFilterCrew]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(crewService.searchFilterCrew(memberId, getCrewSearchFilterRequest));
     }
 
@@ -83,10 +83,10 @@ public class CrewController {
      * 크루 삭제하기
      */
     @PatchMapping("/delete")
-    public BaseResponse<Void> deleteCrew(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<Void> deleteCrew(
                                          @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         crewService.deleteCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
@@ -95,10 +95,10 @@ public class CrewController {
      * 크루 탈퇴하기
      */
     @PatchMapping("/cancel")
-    public BaseResponse<Void> cancelCrew(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<Void> cancelCrew(
                                          @RequestParam String crewName){
         log.info("[CrewController.deleteCrew]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         crewService.cancelCrew(memberId,crewName);
         return new BaseResponse<>(null);
     }
@@ -120,9 +120,9 @@ public class CrewController {
      * 참여중인 크루 조회
      */
     @GetMapping("/join")
-    public BaseResponse<List<GetJoinCrewResponse>> getJoinCrew(@RequestHeader("Authorization") String authorization) {
+    public BaseResponse<List<GetJoinCrewResponse>> getJoinCrew(String authorization) {
         log.info("[CrewController.getJoinCrew]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         List<GetJoinCrewResponse> joinCrewResponses = crewService.getJoinCrew(memberId);
         return new BaseResponse<>(joinCrewResponses);
     }

@@ -28,8 +28,8 @@ public class MemberController {
     }
 
     @PatchMapping("/signout")
-    public BaseResponse<String> signOut(@RequestHeader("Authorization") String authorization){
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+    public BaseResponse<String> signOut(){
+        Long memberId = 1007L;
         memberService.signOut(memberId);
         return new BaseResponse<>("회원탈퇴 되었습니다");
     }
@@ -38,9 +38,9 @@ public class MemberController {
      * 로그아웃
      */
     @PostMapping("/logout")
-    public BaseResponse<Void> logout(@RequestHeader("Authorization") String authorization){
+    public BaseResponse<Void> logout(){
         log.info("[MemberController.logout]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         memberService.logout(memberId);
         return new BaseResponse<>(null);
     }

@@ -19,8 +19,8 @@ public class HomeController {
     private final HomeService homeService;
 
     @GetMapping("/main")
-    public BaseResponse<HomeResponse> getHomeData(@RequestHeader("Authorization") String authorization){
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+    public BaseResponse<HomeResponse> getHomeData(){
+        Long memberId = 1007L;
         return new BaseResponse<>(homeService.getHomeData(memberId));
     }
 }

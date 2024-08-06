@@ -28,9 +28,9 @@ public class SocialringController {
      * 소셜링 등록
      */
     @PostMapping("")
-    public BaseResponse<PostSocialringResponse> createSocialring(@RequestHeader("Authorization") String authorization ,
+    public BaseResponse<PostSocialringResponse> createSocialring(
                                                                  @RequestBody PostSocialringRequest postSocialringRequest) throws IOException {   //헤더에서 소셜링 등록하는 멤버아이디 찾기
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(socialringService.createSocialring(memberId,postSocialringRequest));
     }
 
@@ -38,10 +38,10 @@ public class SocialringController {
      * 소셜링 수정
      */
     @PatchMapping("")
-    public BaseResponse<Void> modifySocialring(@RequestHeader("Authorization") String authorization, @RequestParam String socialringName,
+    public BaseResponse<Void> modifySocialring( @RequestParam String socialringName,
                                                                  @RequestBody PatchSocialringModifyRequest patchSocialringModifyRequest) throws IOException {
 
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         socialringService.modifySocialring(memberId,socialringName,patchSocialringModifyRequest);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
@@ -50,10 +50,10 @@ public class SocialringController {
      * 소셜링 상세 조회
      */
     @GetMapping("")
-    public BaseResponse<GetSocialringDetailResponse> getSocialringDetail(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<GetSocialringDetailResponse> getSocialringDetail(
                                                                          @RequestParam String socialringName){
         log.info("[SocialringController.getSocialringDetail]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(socialringService.getSocialringDetail(memberId, socialringName));
     }
 
@@ -61,9 +61,9 @@ public class SocialringController {
      * 소셜링 참여하기
      */
     @PostMapping("/join")
-    public BaseResponse<Void> joinSocialring(@RequestHeader("Authorization") String authorization,@RequestParam String socialringName){
+    public BaseResponse<Void> joinSocialring(@RequestParam String socialringName){
         log.info("[SocialringController.joinSocialring]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         socialringService.joinSocialring(memberId, socialringName);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
@@ -72,10 +72,10 @@ public class SocialringController {
      * 소셜링 검색결과 필터링
      */
     @GetMapping("/search/filter")
-    public BaseResponse<List<GetSocialringSearchFilterResponse>> searchFilterSocialring(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<List<GetSocialringSearchFilterResponse>> searchFilterSocialring(
                                                                                         @RequestBody GetSocialringSearchFilterRequest getSocialringSearchFilterRequest){
         log.info("[SocialringController.searchFilterSocialring]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(socialringService.searchFilterSocialring(memberId, getSocialringSearchFilterRequest));
     }
   
@@ -83,9 +83,9 @@ public class SocialringController {
      * 참가 예정인 소셜링
      */
     @GetMapping("/join/before")
-    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinBeforeSocialring(@RequestHeader("Authorization") String authorization) {
+    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinBeforeSocialring() {
         log.info("[SocialringController.joinBeforeSocialring]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(socialringService.joinBeforeSocialring(memberId));
     }
 
@@ -93,9 +93,9 @@ public class SocialringController {
      * 참가 완료한 소셜링
      */
     @GetMapping("/join/complete")
-    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinCompleteSocialring(@RequestHeader("Authorization") String authorization){
+    public BaseResponse<List<GetSocialringJoinStatusResponse>> joinCompleteSocialring(){
         log.info("[SocialringController.joinCompleteSocialring]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(socialringService.joinCompleteSocialring(memberId));
     }
 
@@ -103,10 +103,10 @@ public class SocialringController {
      * 소셜링 삭제하기
      */
     @PatchMapping("/delete")
-    public BaseResponse<Void> deleteSocialring(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<Void> deleteSocialring(
                                                @RequestParam("socialringName") String socialringName) {
         log.info("[SocialringController.deleteSocialring]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         socialringService.deleteSocialring(memberId, socialringName);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
@@ -130,10 +130,10 @@ public class SocialringController {
      * 소셜링 취소하기
      */
     @PatchMapping("/cancel")
-    public BaseResponse<Void> cancelSocialring(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<Void> cancelSocialring(
                                                @RequestParam("socialringName") String socialringName) {
         log.info("[SocialringController.cancelSocialring]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         socialringService.cancelSocialring(memberId, socialringName);
         return new BaseResponse<>(BaseExceptionResponseStatus.SUCCESS, null);
     }
@@ -142,10 +142,10 @@ public class SocialringController {
      * 소셜링 조회
      */
     @GetMapping("/inquiry")
-    public BaseResponse<List<GetSocialringResponse>> getSocialringInquiries(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<List<GetSocialringResponse>> getSocialringInquiries(
                                                                        @RequestParam List<Long> socialringId){
         log.info("[SocialringController.getSocialringInquiries]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        Long memberId = 1007L;
         return new BaseResponse<>(socialringService.getSocialringInquiries(memberId, socialringId));
     }
 }
