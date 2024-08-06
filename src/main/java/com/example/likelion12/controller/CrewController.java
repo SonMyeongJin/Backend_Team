@@ -37,11 +37,11 @@ public class CrewController {
      * 크루 조회
      */
     @GetMapping("/inquiry")
-    public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<List<GetCrewInquiryResponse>> getCrewInquiries(
                                                                        @RequestParam int page){
         log.info("[CrewController.getCrewInquiries]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(crewService.getCrewInquiries(memberId,page));
+//        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(crewService.getCrewInquiries(1007,page));
     }
 
 
