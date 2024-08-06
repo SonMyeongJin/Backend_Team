@@ -142,10 +142,10 @@ public class SocialringController {
      * 소셜링 조회
      */
     @GetMapping("/inquiry")
-    public BaseResponse<List<GetSocialringResponse>> getSocialringInquiries(@RequestHeader("Authorization") String authorization,
+    public BaseResponse<List<GetSocialringResponse>> getSocialringInquiries(
                                                                        @RequestParam List<Long> socialringId){
         log.info("[SocialringController.getSocialringInquiries]");
-        Long memberId = jwtProvider.extractIdFromHeader(authorization);
-        return new BaseResponse<>(socialringService.getSocialringInquiries(memberId, socialringId));
+//        Long memberId = jwtProvider.extractIdFromHeader(authorization);
+        return new BaseResponse<>(socialringService.getSocialringInquiries(1007, socialringId));
     }
 }
