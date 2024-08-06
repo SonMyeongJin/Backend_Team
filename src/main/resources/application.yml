@@ -8,6 +8,7 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+
   s3:
     bucket-name: ${AWS_S3_BUCKET_NAME}
     access-key: ${AWS_ACCESS_KEY_ID}
