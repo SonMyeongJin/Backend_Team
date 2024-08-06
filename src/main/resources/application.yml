@@ -39,7 +39,7 @@ spring:
         registration:
           kakao:
             client-id: ${CLIENT_ID}
-            redirect-uri: http://localhost:3000
+            redirect-uri: http://localhost:3000/auth/kakao/callback
 ---
 jwt:
   secret: ${JWT_SECRET}
