@@ -549,16 +549,20 @@ public class SocialringService {
     /**
      * 소셜링  조회
      */
-    public List<GetSocialringResponse> getSocialringInquiries(int memberId, List<Long> socialringIds) {
+    public List<GetSocialringResponse> getSocialringInquiries(Long memberId, int page) {
         log.info("[SocialringService.getSocialringInquiries]");
 
-        List<GetSocialringResponse> getSocialringResponse = new ArrayList<>();
+        List<Socialring> allSocialrings = socialringRepository.findAllByStatus(BaseStatus.ACTIVE);
+        List<GetSocialringResponse> getSocialringInquiryResponses = new ArrayList<>();
 
-        for (Long socialringId : socialringIds) {
+        // offset과 limit 계산
+        int offset = (page - 1) * 9;
+        int recordSize = 9 ;
 
-            //조회하고자 하는 소셜링
-            Socialring socialring = socialringRepository.findBySocialringIdAndStatus(socialringId, BaseStatus.ACTIVE)
-                    .orElseThrow(() -> new SocialringException((CANNOT_FOUND_SOCIALRING)));
+        // 페이징 처리된 크루 목록 생성
+        for (int i = offset; i < Math.min(offset + recordSize, allSocialrings.size()); i++) {
+
+            Socialring socialring = allSocialrings.get(i);
 
             GetSocialringResponse response = new GetSocialringResponse(
                     socialring.getSocialringName(),
@@ -569,9 +573,9 @@ public class SocialringService {
                     socialring.getCommentSimple()
             );
 
-            getSocialringResponse.add(response);
+            getSocialringInquiryResponses.add(response);
         }
 
-        return getSocialringResponse;
+        return getSocialringInquiryResponses;
     }
 }
