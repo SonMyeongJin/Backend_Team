@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests ->
                         requests
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/test", "/auth/kakao/callback", "/user/signup", "/main").permitAll()
+                                .requestMatchers("/test", "/auth/kakao/callback", "/user/signup", "/main", "/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement ->
